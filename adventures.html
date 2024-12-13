@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventures | Nicholas Georgiou</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fdf6e3;
+        }
+
+        header {
+            background: url('Images/Panorama_3.JPEG') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+            header h1 {
+                font-size: 3rem;
+                margin: 0;
+            }
+
+            header h2 {
+                font-size: 1.5rem;
+                font-weight: 300;
+                margin-top: 10px;
+            }
+
+        nav {
+            background: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            position: sticky;
+            top: 0;
+        }
+
+            nav a {
+                color: white;
+                text-decoration: none;
+                margin: 0 15px;
+                font-weight: bold;
+                transition: color 0.3s;
+            }
+
+                nav a:hover {
+                    color: #f59e42;
+                }
+
+        section {
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .scrapbook {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .scrapbook-item {
+            background: white;
+            border: 5px solid #f59e42;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+            .scrapbook-item img {
+                max-width: 100%;
+                border-radius: 5px;
+            }
+
+            .scrapbook-item p {
+                margin-top: 10px;
+                font-style: italic;
+            }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Adventure Scrapbook</h1>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="research.html">Research</a>
+        <a href="adventures.html">Adventures</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+    <section id="adventures">
+        <h2>My Adventures</h2>
+        <p>Here are snapshots of my favorite adventures. I have been lucky enough to travel the world with the best people in the entire world.
+        At the end of Summer of 2024, I traversed the pacific northwest, headed east to Montana, dipped down into Wyoming and Utah, seeing everything possible with my two best friends, one tent named 'Green Grommet', and a jeep.
+        Seriously some of the most fun I have ever had. Here is to adventures!</p>
+
+        <div class="scrapbook">
+
+            <div class="scrapbook-item">
+                <img src="Images/Gorge.jpg" alt="The Gorge Amphitheater">
+                <p>Bob Dylan concert at the Gorge Amphitheater. Beautiful sunset and even better venue.</p>
+                <p>08/10/2024</p>
+            </div>
+            <div class="scrapbook-item">
+                <img src="Images/Colchuck.JPEG" alt="Lake Colchuck">
+                <p>Fun day trip in Washington's Enchantments. Lake Colchuck does not disappoint.</p>
+                <p>08/11/2024</p>
+            </div>
+            <div class="scrapbook-item">
+                <img src="Images/Teton_Rock.JPEG" alt="Lake Solitude Hike">
+                <p>A photo taken on a rock during our Lake Solitude hike.</p>
+                <p>08/16/2024</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Nicholas Georgiou. All rights reserved.</p>
+    </footer>
+</body>
+</html>
