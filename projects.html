@@ -1,0 +1,146 @@
+﻿<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Nicholas Georgiou</title>
+    <link rel="stylesheet" href="StyleSheet.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: url('Images/Panorama_3.JPEG') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+            header h1 {
+                font-size: 3rem;
+                margin: 0;
+            }
+
+            header h2 {
+                font-size: 1.5rem;
+                font-weight: 300;
+                margin-top: 10px;
+            }
+
+        nav {
+            background: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            position: sticky;
+            top: 0;
+        }
+
+            nav a {
+                color: white;
+                text-decoration: none;
+                margin: 0 15px;
+                font-weight: bold;
+                transition: color 0.3s;
+            }
+
+                nav a:hover {
+                    color: #ff6347;
+                }
+
+        section {
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+            section h2 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            section p {
+                margin-bottom: 15px;
+                line-height: 1.6;
+            }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            gap: 20px; /* Adds space between the image and text */
+            align-items: center; /* Centers content vertically */
+        }
+
+            .flex-container img {
+                max-width: 60%; /* Adjust the image width */
+                height: auto; /* Maintain aspect ratio */
+            }
+
+            .flex-container .text {
+                flex: 1; /* Ensures the text takes the remaining space */
+                font-size: 1.1em;
+                text-align: justify;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>School & Personal Projects</h1>
+        <h2>Projects Outside of Research</h2>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="research.html">Research</a>
+        <a href="projects.html">Projects</a>
+        <a href="adventures.html">Adventures</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+    <section id="projects">
+        <h2> Projects</h2>
+
+        <h3>Thrust Vectored Controlled (TVC) Rocket</h3>
+        <p>
+            For my first personal engineering project, I am designing a rocket that relies on engine gimbaling for stability instead of fins.
+            As expected, this is no easy task, but I am prepared to iterate and refine the design until I achieve success.
+            The idea came to life during my Senior year winter break, where I decided I needed to build something.
+            Dualing as my Senior Physics Design Project, I am hoping for a static thrust test by the end of the semester.
+            I will continue updating this page as I make progress.
+        </p>
+
+        <h4>Flight Controller & Software</h4>
+        <div class="flex-container">
+            <img src="Images/Hardware_Diagram.jpg" alt="Nicholas Georgiou">
+            <div class="text">
+                <p>
+                    The core of this project involves designing a custom flight controller and its accompanying software.
+                    With no prior PCB experience, I opted for a perforated circuit board approach.
+                    The setup consists of a primary board serving as the flight controller and a secondary board dedicated to powering all the systems.
+                </p>
+                </div>
+        </div>
+        <p>
+            
+        </p>
+
+
+
+                <h4>TVC Mount</h4>
+
+    </section>
+   
+
+    <footer>
+        <p>&copy; 2024 Nicholas Georgiou. All rights reserved.</p>
+    </footer>
+</body>
+</html>

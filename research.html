@@ -73,6 +73,39 @@
             background: #333;
             color: white;
         }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            gap: 20px; /* Adds space between the image and text */
+            align-items: center; /* Centers content vertically */
+        }
+
+            .flex-container img {
+                max-width: 40%; /* Adjust the image width */
+                height: auto; /* Maintain aspect ratio */
+            }
+
+            .flex-container .text {
+                flex: 1; /* Ensures the text takes the remaining space */
+                font-size: 1.1em;
+                text-align: justify;
+            }
+
+        .full-width-container {
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .full-width-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
     </style>
 </head>
 <body>
@@ -83,6 +116,7 @@
     <nav>
         <a href="index.html">Home</a>
         <a href="research.html">Research</a>
+        <a href="projects.html">Projects</a>
         <a href="adventures.html">Adventures</a>
         <a href="contact.html">Contact</a>
     </nav>
@@ -92,16 +126,35 @@
         <h3>Cooperative Unmanned Aerial Systems (CUSL)</h3>
         <p>
             My work at CUSL focuses on developing high-frequency revolution per minute (RPM) data logging systems and creating dynamic thrust models for Unmanned Aerial Systems (UAS).
-            I have familiarized myself with open-source autopilot code using GitHub and Linux to navigate, edit, and compile new enhanced firmware to log RPM data at higher rates (50 Hz) then ever before.
+            I have familiarized myself with open-source autopilot code using GitHub and Linux to navigate, edit, and compile new enhanced firmware to log RPM data at higher rates (50 Hz) than ever before.
             As an Undergraduate Research Fellow, I designed a motor test stand to log real-time RPM data safely. Using a sensor to detect voltage changes in AC motor wires, I synchronized electronic speed controller data with flight controller outputs, validating new RPM systems for thrust modeling.
         </p>
 
         <h3>Composites Engineering at NASA Langley</h3>
-        <p>
-            During my internship at NASA Langley Research Center, I fabricated composite wingboxes using advanced manufacturing techniques. My contributions included implementing a novel bonding technique for skin-to-spar interfaces, conducting ultrasonic testing for non-destructive evaluation, and designing composite molds to support research initiatives.
-            I prototyped a composite tubular spar mold for a wing test article, addressing challenges like coefficient of thermal expansion (CTE). This project involved CAD modeling, detailed engineering drawings, and multiple iterations of rapid prototyping to achieve precise specifications.
-        </p>
-
+        <div class="flex-container">
+            <img src="Images/NASA_wingboxes.jpg" alt="Nicholas Georgiou">
+            <div class="text">
+                <p>
+                    During my internship at NASA Langley Research Center, I fabricated composite wingboxes using advanced manufacturing techniques. My contributions included implementing a novel bonding technique for skin-to-spar interfaces, conducting ultrasonic testing for non-destructive evaluation, and designing composite molds to support research initiatives.
+                </p>
+                <p>
+                    I prototyped a composite tubular spar mold for a wing test article, addressing challenges like coefficient of thermal expansion (CTE). This project involved CAD modeling, detailed engineering drawings, and multiple iterations of rapid prototyping to achieve precise specifications.
+                </p>
+            </div>
+            <h3>In-Situ Analysis of Tow-Steered Composites</h3>
+            <div class="flex-container">
+                <img src="Images/InSitu_Results_Viewer_Frame.png" alt="Nicholas Georgiou">
+                <div class="text">
+                    <p>
+                        Also at NASA Langley, I had the opportunity to work on an in-situ ultrasonic analysis of a tow-steered composite panel.
+                        A tow-steered composite contains tow paths that are curved togther in high-stress regions by using automated fiber placement (AFP).
+                        However due to AFP, many defects can occur during the layup. These defects were monitored during the panel's autoclave cure using a novel in-situ ultrasonic scanner.
+                        Part of my work involved correlating the in-situ c-scans to the cure cycle parameters (temperature, pressure, tg, etc.). A snapshot of this is to the left.
+                        For a more in depth explanation, check out the presentation <a href="file:///C:/Users/nicho/OneDrive/Desktop/NASA/Exit%20Presentation/2024_Summer_Nicholas_Georgiou_Exit_Presentation_v2.pdf">here</a>, and the research paper <a href="https://ntrs.nasa.gov/api/citations/20240008661/downloads/004123_Hudson_STRIVES.pdf">here</a>.
+                    </p>
+                    </div>
+                </div>
+            </div>
         <h2>Publications</h2>
         <p>
             <a href="https://ntrs.nasa.gov/api/citations/20240008661/downloads/004123_Hudson_STRIVES.pdf" target="_blank">
@@ -110,8 +163,6 @@
                 Cure
             </a>
         </p>
-
-
     </section>
 
     <footer>
