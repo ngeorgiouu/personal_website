@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research | Nicholas Georgiou</title>
+    <link rel="stylesheet" href="StyleSheet.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,28 +29,6 @@
                 font-weight: 300;
                 margin-top: 10px;
             }
-
-        nav {
-            background: #333;
-            color: white;
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-            position: sticky;
-            top: 0;
-        }
-
-            nav a {
-                color: white;
-                text-decoration: none;
-                margin: 0 15px;
-                font-weight: bold;
-                transition: color 0.3s;
-            }
-
-                nav a:hover {
-                    color: #ff6347;
-                }
 
         section {
             padding: 40px 20px;
@@ -105,7 +84,6 @@
             height: auto;
             display: block;
         }
-
     </style>
 </head>
 <body>
@@ -131,28 +109,33 @@
         </p>
 
         <h3>Composites Engineering at NASA Langley</h3>
-        <div class="flex-container">
-            <img src="Images/NASA_wingboxes.jpg" alt="Nicholas Georgiou">
-            <div class="text">
+        <div class="welcome-container">
+            <img src="Images/NASA_wingboxes.jpg" alt="Nicholas Georgiou" width="350">
+            <div class="text-container">
                 <p>
                     During my internship at NASA Langley Research Center, I fabricated composite wingboxes using advanced manufacturing techniques. My contributions included implementing a novel bonding technique for skin-to-spar interfaces, conducting ultrasonic testing for non-destructive evaluation, and designing composite molds to support research initiatives.
                 </p>
                 <p>
                     I prototyped a composite tubular spar mold for a wing test article, addressing challenges like coefficient of thermal expansion (CTE). This project involved CAD modeling, detailed engineering drawings, and multiple iterations of rapid prototyping to achieve precise specifications.
                 </p>
+                <p>
+                    Overall, I was grateful for the opportunity to gain hands-on experience with composites and develop analytical skills in ultrasonic testing.
+                    The image to the left shows me standing in front of the autoclave with the two wingboxes I manufactured.
+                    The two large slits were made for mechanical testing, specifically Double Cantilever Beam (DCB) testing, which I was lucky enough to experiment with.
+                </p>
             </div>
-            <h3>In-Situ Analysis of Tow-Steered Composites</h3>
-            <div class="flex-container">
-                <img src="Images/InSitu_Results_Viewer_Frame.png" alt="Nicholas Georgiou">
-                <div class="text">
+            </div>
+            <h4>In-Situ Analysis of Tow-Steered Composites</h4>
+            <div class="welcome-container">
+                <img src="Images/InSitu_Results_Viewer_Frame.png" alt="Nicholas Georgiou" width="400">
+                <div class="text-container">
                     <p>
                         Also at NASA Langley, I had the opportunity to work on an in-situ ultrasonic analysis of a tow-steered composite panel.
-                        A tow-steered composite contains tow paths that are curved togther in high-stress regions by using automated fiber placement (AFP).
+                        A tow-steered composite contains tow paths that are curved together in high-stress regions by using automated fiber placement (AFP).
                         However due to AFP, many defects can occur during the layup. These defects were monitored during the panel's autoclave cure using a novel in-situ ultrasonic scanner.
                         Part of my work involved correlating the in-situ c-scans to the cure cycle parameters (temperature, pressure, tg, etc.). A snapshot of this is to the left.
                         For a more in depth explanation, check out the presentation <a href="https://ntrs.nasa.gov/api/citations/20240013255/downloads/ASC%202024_Tow%20Steered%20Defect%20Detection%20During%20Cure.pdf">here</a>, and the research paper <a href="https://ntrs.nasa.gov/api/citations/20240008661/downloads/004123_Hudson_STRIVES.pdf">here</a>.
                     </p>
-                    </div>
                 </div>
             </div>
         <h2>Publications</h2>

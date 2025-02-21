@@ -2,7 +2,7 @@
 .welcome-container {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     gap: 20px;
     max-width: 900px;
     margin: 0 auto;
@@ -34,4 +34,53 @@
     .text-container {
         text-align: left;
     }
+}
+
+/* Navigation Styles */
+body {
+    margin: 0; /* Remove default body margin */
+}
+
+nav {
+    background: #333;
+    color: white;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 100;
+    margin: 0 auto; /* Center the nav itself */
+}
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: bold;
+        transition: color 0.3s;
+        display: inline-block;
+        padding: 8px 0;
+    }
+
+        nav a:hover {
+            color: #ff6347;
+        }
+
+/* Responsive Navigation */
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+    }
+
+        nav a {
+            display: block;
+            width: 80%;
+            text-align: center;
+            margin: 5px 0;
+            padding: 10px 0;
+        }
 }
