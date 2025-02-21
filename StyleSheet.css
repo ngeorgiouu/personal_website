@@ -45,15 +45,15 @@ nav {
     background: #333;
     color: white;
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    justify-content: center;
+    align-items: center;
     padding: 10px 0;
     position: sticky;
     top: 0;
     width: 100%;
     box-sizing: border-box;
     z-index: 100;
-    margin: 0 auto; /* Center the nav itself */
+    margin: 0 auto;
 }
 
     nav a {
@@ -70,17 +70,32 @@ nav {
             color: #ff6347;
         }
 
-/* Responsive Navigation */
+/* Responsive Navigation - Horizontal Scrolling on Mobile */
 @media (max-width: 600px) {
     nav {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: start;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        padding: 10px;
     }
 
         nav a {
-            display: block;
-            width: 80%;
-            text-align: center;
-            margin: 5px 0;
-            padding: 10px 0;
+            display: inline-block;
+            width: auto;
+            flex-shrink: 0;
+            margin: 0 10px;
         }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        nav::-webkit-scrollbar {
+            display: none;
+        }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    nav {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
 }
