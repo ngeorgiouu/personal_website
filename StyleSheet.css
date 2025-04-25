@@ -39,36 +39,18 @@ h4 {
     }
 }
 
-/* Container that holds both text and figure */
-.welcome-container-centered {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Left align text items */
-    text-align: left;
-    width: 100%;
+.centered-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Text content stays left-aligned */
-.text-container-centered {
-    text-align: left;
-    width: 100%; /* Optional, ensures it fills the container */
-}
-
-/* Center the figure/image inside its own block */
-.centered-figure {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-top: 20px; /* Spacing from text */
-}
-
+/* Optional: Add responsiveness if you need adjustments on small screens */
 @media (max-width: 768px) {
-    .welcome-container-centered {
-        align-items: center;
-    }
-
-    .text-container-centered {
-        text-align: center; /* If you want text to center on smaller screens */
+    .centered-image {
+        max-width: 90%; /* slightly smaller on smaller screens */
     }
 }
 
