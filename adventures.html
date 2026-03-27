@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adventures | Nicholas Georgiou</title>
     <link rel="stylesheet" href="./StyleSheet.css">
+
+    <!-- Cesium -->
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,53 +25,32 @@
             padding: 50px 20px;
         }
 
-            header h1 {
-                font-size: 3rem;
-                margin: 0;
-            }
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+        }
 
-            header h2 {
-                font-size: 1.5rem;
-                font-weight: 300;
-                margin-top: 10px;
-            }
+        header h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-top: 10px;
+        }
 
         section {
-            padding: 40px 20px;
+            padding: 20px;
             max-width: 1000px;
             margin: 0 auto;
         }
 
-            section h2 {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-
-        .scrapbook {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+        /* 🌍 Globe container */
+        #cesiumContainer {
+            width: 100%;
+            height: 600px;
             margin-top: 20px;
-        }
-
-        .scrapbook-item {
-            background: white;
-            border: 5px solid #f59e42;
             border-radius: 10px;
-            padding: 10px;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
-            text-align: center;
+            overflow: hidden;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
         }
-
-            .scrapbook-item img {
-                max-width: 100%;
-                border-radius: 5px;
-            }
-
-            .scrapbook-item p {
-                margin-top: 10px;
-                font-style: italic;
-            }
 
         footer {
             text-align: center;
@@ -77,11 +61,13 @@
         }
     </style>
 </head>
+
 <body>
     <header>
-        <h1>Adventure Scrapbook</h1>
-        <h2>Outdoor Trips and Stories</h2>
+        <h1>Adventure Map</h1>
+        <h2>Explore Where I've Been</h2>
     </header>
+
     <nav>
         <a href="index.html">Home</a>
         <a href="research.html">Research</a>
@@ -89,163 +75,96 @@
         <a href="adventures.html">Adventures</a>
         <a href="contact.html">Contact</a>
     </nav>
-    <section id="adventures">
+
+    <section>
         <h2>My Adventures</h2>
         <p>
-            A collection of some of my favorite adventures—moments from the places I've been lucky enough to explore with friends and family. Grateful for every mile, memory, and map pin.
-            Here’s to wherever the next one leads.
+            A collection of some of my favorite adventures—now mapped across the globe. 
+            Click any location to explore photos and memories from each trip.
         </p>
 
-        <h3>Beginning of Summer 2025 Rock Climbing Trip</h3>
-        <p>
-            Only have gone to the climbing gym once, I was invited to rock climb in the Red River Gorge. Meeting my old NASA friends Finn, Callahan, and Dave, we got active in the Gorge.
-            There is a first time for everything, and I was glad to have friends who got me out there!
-        </p>
-
-        <div class="scrapbook">
-
-
-            <div class="scrapbook-item">
-                <img src="Images/Red_River_Gorge_05_2025/Nick_Finn_Posted_05_30_2025.jpg" alt="Campsite RRG">
-                <p>Finn and I posted at the campsite. Fueled up and ready for the next adventure! </p>
-                <p>05/30/2025</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Red_River_Gorge_05_2025/Cally_Belay_05_31_2025.JPEG" alt="Cally Belay">
-                <p>Callahan Belaying Finn on 'My Way or The Highway'. It was never Finn's way on this one.</p>
-                <p>05/31/2025</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Red_River_Gorge_05_2025/Teddy_Bear_05_31_2025.JPEG" alt="Teddy Bear">
-                <p>Gotta bring the Teddy Bear wherever I go. Classic pic at the campsite late night.</p>
-                <p>05/31/2025</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Red_River_Gorge_05_2025/Finn_to_Dave_05_31_2025.JPEG" alt="Finn to Dave">
-                <p>Dave posted up in a natural rock chair. Finn is letting everyone know.</p>
-                <p>05/31/2025</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Red_River_Gorge_05_2025/Miguels_Pizza_06_01_2025.JPEG" alt="Miguels Pizza">
-                <p>Dave, Finn, Callahan, and I outside the notorious Miguels Pizza. Our campsite was found behind the Pizzeria! </p>
-                <p>06/01/2025</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Red_River_Gorge_05_2025/Cally_Nick_06_01_2025.JPEG" alt="Nicks first Lead Climb">
-                <p>Callahan and I posted up after my first true lead climb. A casual one. Sunglass game is on point.</p>
-                <p>06/01/2025</p>
-            </div>
-
-        </div>
-
-        <h3>End of Summer 2024 Roadtrip</h3>
-        <p>
-            As Summer 2024 came to a close, I set off across the Pacific Northwest with my two lifelong friends, a battered tent named ‘Green Grommet,’ and Henry’s Jeep that carried more memories than miles. We crossed into Montana, dipped into Wyoming and Utah, and let the road decide the rest.
-            It was a snapshot of youth—pure, unscripted, and unforgettable. Here are a few glimpses into that perfect chaos.
-        </p>
-
-        <div class="scrapbook">
-
-            <div class="scrapbook-item">
-                <img src="Images/Rainier.JPEG" alt="Mount Raininer">
-                <p>Stone and I sneaked off to Mount Rainier National Park. Hiked around a creek and captured this. </p>
-                <p>08/09/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Gorge.jpg" alt="The Gorge Amphitheater">
-                <p>Bob Dylan concert at the Gorge Amphitheater. Beautiful sunset and even better venue.</p>
-                <p>08/10/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Colchuck.JPEG" alt="Lake Colchuck">
-                <p>Fun day trip in Washington's Enchantments. Lake Colchuck does not disappoint.</p>
-                <p>08/11/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Glacier.JPEG" alt="Glacier National Park">
-                <p>A summit hike up Mt. Henry in Glacier National Park. Two Medicine Lake is seen off in the distance.</p>
-                <p>08/13/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Yellowstone_08_15_2025.JPEG" alt="Horse Photo">
-                <p>Pulled over to catch the end of the sunrise over a lake in Yellowstone.</p>
-                <p>08/15/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Horse.JPEG" alt="Yellowstone Morning">
-                <p>Probably my favorite photo I took during the entire trip. Was caught behind some horse back riders on the way to Lake Solitude.</p>
-                <p>08/16/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Teton_Rock.JPEG" alt="Lake Solitude Hike">
-                <p>A photo taken on a rock during our Lake Solitude hike. The Tetons loom in the background.</p>
-                <p>08/16/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/AngelsLanding_08_19_2025.JPEG" alt="Angles Landing">
-                <p>Caught the first bus up to Angles Landing. We got to the top at 7:50 AM. Pretty sketchy at times, but we made great time. Headed to the Narrows afterwards.</p>
-                <p>08/19/2024</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Narrows_08_19_2025.JPEG" alt="Narrows">
-                <p>Took us awhile to figure out that the Narrows just keeps going. Got a perspective photo here. This trail really tested our friendship.</p>
-                <p>08/19/2024</p>
-            </div>
-
-        </div>
-
-        <h3>Cyprus 2023 Family Trip</h3>
-        <p>
-            I feel incredibly grateful to have visited Cyprus—my dad’s home country and the place where my grandmother and one of his sisters still live. Nestled in the eastern Mediterranean, the island is a stunning blend of crystal-clear beaches, rugged coastlines, and forested mountains. But beyond its natural beauty, Cyprus holds deep meaning for me. It’s a piece of my family's story, a connection to where my dad came from.
-            These photos are from my most recent trip in the summer of 2023—a visit I’ll always hold close.
-        </p>
-
-        <div class="scrapbook">
-            <div class="scrapbook-item">
-                <img src="Images/Cyprus_yiayia.JPEG" alt="YiaYia">
-                <p>
-                    A photo with my Yiayia, sister, and cousin during a lovely outdoor lunch at my dad's sister's house.
-                </p>
-                <p>05/23/2023</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Cyprus_Hike.JPEG" alt="Hike">
-                <p>
-                    Taken atop of Moutti tis Sotiras. This hike started out on the northeast tip of Cyprus near the shoreline. My sister and I climbed up the mountain to watch the sun set over the water. Remarkable.
-                </p>
-                <p>05/24/2023</p>
-            </div>
-
-            <div class="scrapbook-item">
-                <img src="Images/Cyprus_Fam.JPEG" alt="Fam">
-                <p>
-
-                    A photo taken at Cape Cavo Greco with my lovely mom and dad. Located in the southeastern corner of Cyprus, this rugged peninsula boasts cliffside hikes and a stunning turquoise lagoon.
-                </p>
-                <p>05/26/2023</p>
-            </div>
-
-        </div>
-
-
+        <!-- 🌍 Globe -->
+        <div id="cesiumContainer"></div>
     </section>
 
     <footer>
         <p>&copy; 2024 Nicholas Georgiou. All rights reserved.</p>
     </footer>
+
+    <script>
+        // 🔑 REQUIRED: Replace with your Cesium Ion token
+        Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDU0MWJiOC00YWM1LTQwMDItODFiYS00YzMyNGIwMTc3OGIiLCJpZCI6NDEwMjMwLCJpYXQiOjE3NzQ2NDc4NjN9.2lHv7QJPf2mTxkkO-ymcjwTyX2RmohXUjwvKFM_nd_Y";
+
+        const viewer = new Cesium.Viewer('cesiumContainer', {
+            terrain: Cesium.Terrain.fromWorldTerrain()
+        });
+
+        // 🌍 Adventure Data (start small, expand later)
+        const adventures = [
+            {
+                title: "Red River Gorge Climbing",
+                lat: 37.8,
+                lon: -83.6,
+                image: "Images/Red_River_Gorge_05_2025/Nick_Finn_Posted_05_30_2025.jpg",
+                description: "First outdoor climbing trip with friends."
+            },
+            {
+                title: "Mount Rainier",
+                lat: 46.8523,
+                lon: -121.7603,
+                image: "Images/Rainier.JPEG",
+                description: "Exploring the Pacific Northwest."
+            },
+            {
+                title: "Glacier National Park",
+                lat: 48.7596,
+                lon: -113.7870,
+                image: "Images/Glacier.JPEG",
+                description: "Summit hike with incredible views."
+            },
+            {
+                title: "Yellowstone",
+                lat: 44.4280,
+                lon: -110.5885,
+                image: "Images/Horse.JPEG",
+                description: "One of my favorite shots ever."
+            },
+            {
+                title: "Zion National Park",
+                lat: 37.2982,
+                lon: -113.0263,
+                image: "Images/AngelsLanding_08_19_2025.JPEG",
+                description: "Angels Landing and the Narrows."
+            },
+            {
+                title: "Cyprus",
+                lat: 35.1264,
+                lon: 33.4299,
+                image: "Images/Cyprus_Fam.JPEG",
+                description: "Family roots and Mediterranean views."
+            }
+        ];
+
+        // 📍 Add pins
+        adventures.forEach(place => {
+            viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat),
+                billboard: {
+                    image: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+                    scale: 0.05
+                },
+                description: `
+                    <h3>${place.title}</h3>
+                    <p>${place.description}</p>
+                    <img src="${place.image}" width="250"/>
+                `
+            });
+        });
+
+        // ✨ Start centered on US
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(-98.5, 39.8, 20000000)
+        });
+    </script>
 </body>
 </html>
