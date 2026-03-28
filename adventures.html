@@ -65,7 +65,7 @@
 <body>
     <header>
         <h1>Adventure Map</h1>
-        <h2>Explore Where I've Been</h2>
+        <h2>Pins from My Journey</h2>
     </header>
 
     <nav>
@@ -92,14 +92,73 @@
     </footer>
 
     <script>
-        // 🔑 REQUIRED: Replace with your Cesium Ion token
+        // 🔑 Cesium Ion token
         Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDU0MWJiOC00YWM1LTQwMDItODFiYS00YzMyNGIwMTc3OGIiLCJpZCI6NDEwMjMwLCJpYXQiOjE3NzQ2NDc4NjN9.2lHv7QJPf2mTxkkO-ymcjwTyX2RmohXUjwvKFM_nd_Y";
 
         const viewer = new Cesium.Viewer('cesiumContainer', {
             terrain: Cesium.Terrain.fromWorldTerrain()
         });
 
-        // 🌍 Adventure Data (start small, expand later)
+        // ─────────────────────────────────────────────
+        // 🎨 Style the infoBox (runs every time a pin
+        //    is clicked and the iframe reloads)
+        // ─────────────────────────────────────────────
+        viewer.infoBox.frame.addEventListener('load', function () {
+            const doc = viewer.infoBox.frame.contentDocument;
+            const style = doc.createElement('style');
+            style.textContent = `
+                /* Reset & base */
+                * { box-sizing: border-box; }
+
+                body {
+                    margin: 0;
+                    padding: 14px;
+                    font-family: Arial, sans-serif;
+                    background: #fdf6e3;
+                    color: #333;
+                    overflow-y: auto;    /* scroll if content is taller than panel */
+                    overflow-x: hidden;
+                }
+
+                /* Title */
+                h3 {
+                    font-size: 1.1rem;
+                    margin: 0 0 8px 0;
+                    color: #b45309;
+                    border-bottom: 2px solid #f59e42;
+                    padding-bottom: 6px;
+                }
+
+                /* Description */
+                p {
+                    font-size: 0.88rem;
+                    line-height: 1.55;
+                    margin: 8px 0 10px 0;
+                    font-style: italic;
+                    color: #555;
+                }
+
+                /* Photo — fluid, never overflows panel */
+                img {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    border-radius: 8px;
+                    margin-top: 6px;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+                    display: block;
+                }
+            `;
+            doc.head.appendChild(style);
+        });
+
+        // 📐 Panel outer dimensions
+        viewer.infoBox.container.style.width  = "320px";
+        viewer.infoBox.container.style.height = "440px";
+
+        // ─────────────────────────────────────────────
+        // 🌍 Adventure Data
+        // ─────────────────────────────────────────────
         const adventures = [
             {
                 title: "Red River Gorge Climbing",
@@ -130,18 +189,18 @@
                 description: "One of my favorite shots ever."
             },
             {
-                title: "Zion National Park",
+                title: "Zion National Park — Angels Landing",
                 lat: 37.2982,
                 lon: -113.0263,
                 image: "Images/AngelsLanding_08_19_2025.JPEG",
-                description: "Angels Landing and the Narrows."
+                description: "Angels Landing at 7:50 AM. Pretty sketchy at times, but we made great time."
             },
             {
-                title: "Cyprus",
+                title: "Cyprus — Cape Cavo Greco",
                 lat: 35.1264,
                 lon: 33.4299,
                 image: "Images/Cyprus_Fam.JPEG",
-                description: "Family roots and Mediterranean views."
+                description: "Family roots and Mediterranean views. Cape Cavo Greco with Mom and Dad."
             },
             {
                 title: "The Gorge Amphitheater",
@@ -165,45 +224,52 @@
                 description: "Lake Solitude hike with the Tetons looming in the background."
             },
             {
-                title: "Zion - The Narrows",
+                title: "Zion — The Narrows",
                 lat: 37.3097,
                 lon: -112.9479,
                 image: "Images/Narrows_08_19_2025.JPEG",
                 description: "The Narrows just keeps going. A trail that really tested our friendship."
             },
             {
-                title: "Cyprus - Moutti tis Sotiras",
+                title: "Cyprus — Moutti tis Sotiras",
                 lat: 35.6865,
                 lon: 34.5731,
                 image: "Images/Cyprus_Hike.JPEG",
                 description: "Summit hike watching the sun set over the Mediterranean."
             },
             {
-                title: "Cyprus - Yiayia's Visit",
-                lat: 35.1264,
-                lon: 33.4299,
+                title: "Cyprus — Yiayia's Visit",
+                lat: 35.15,
+                lon: 33.36,
                 image: "Images/Cyprus_yiayia.JPEG",
                 description: "Lunch with Yiayia and family at my dad's sister's house."
             }
         ];
 
-        // 📍 Add pins
+        // ─────────────────────────────────────────────
+        // 📍 Add pins — visible in both 2D and 3D
+        // ─────────────────────────────────────────────
         adventures.forEach(place => {
             viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat),
+                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 5000),
                 billboard: {
                     image: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-                    scale: 0.05
+                    scale: 0.05,
+                    heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND, // float above terrain
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,               // pin tip at location
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,         // never hidden by terrain
+                    pixelOffset: new Cesium.Cartesian2(0, -10)                  // slight upward nudge
                 },
+                name: place.title,
                 description: `
                     <h3>${place.title}</h3>
                     <p>${place.description}</p>
-                    <img src="${place.image}" width="250"/>
+                    <img src="${place.image}" alt="${place.title}" />
                 `
             });
         });
 
-        // ✨ Start centered on US
+        // ✨ Start centered on the US
         viewer.camera.flyTo({
             destination: Cesium.Cartesian3.fromDegrees(-98.5, 39.8, 20000000)
         });
