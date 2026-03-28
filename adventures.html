@@ -105,9 +105,18 @@
         // ─────────────────────────────────────────────
         viewer.infoBox.frame.addEventListener('load', function () {
             const doc = viewer.infoBox.frame.contentDocument;
+
+            // ✅ Force the iframe element itself to the correct width immediately
+            viewer.infoBox.frame.style.width = "320px";
+
             const style = doc.createElement('style');
             style.textContent = `
-                /* Reset & base */
+                /* ✅ Lock the root element width so content doesn't render narrow */
+                html, body {
+                    width: 320px;
+                    min-width: 320px;
+                }
+
                 * { box-sizing: border-box; }
 
                 body {
@@ -116,11 +125,9 @@
                     font-family: Arial, sans-serif;
                     background: #fdf6e3;
                     color: #333;
-                    overflow-y: auto;    /* scroll if content is taller than panel */
+                    overflow-y: auto;
                     overflow-x: hidden;
                 }
-
-                /* Title */
                 h3 {
                     font-size: 1.1rem;
                     margin: 0 0 8px 0;
@@ -128,8 +135,6 @@
                     border-bottom: 2px solid #f59e42;
                     padding-bottom: 6px;
                 }
-
-                /* Description */
                 p {
                     font-size: 0.88rem;
                     line-height: 1.55;
@@ -137,8 +142,6 @@
                     font-style: italic;
                     color: #555;
                 }
-
-                /* Photo — fluid, never overflows panel */
                 img {
                     width: 100%;
                     max-width: 100%;
