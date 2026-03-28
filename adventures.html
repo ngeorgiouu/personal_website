@@ -99,35 +99,44 @@
             terrain: Cesium.Terrain.fromWorldTerrain()
         });
 
-        // ─────────────────────────────────────────────
-        // 🎨 Style the infoBox (runs every time a pin
-        //    is clicked and the iframe reloads)
-        // ─────────────────────────────────────────────
+        // 📐 Panel dimensions
+        viewer.infoBox.container.style.width      = "320px";
+        viewer.infoBox.container.style.height     = "440px";
+        viewer.infoBox.container.style.transition = "none";   // ← kill slide animation
+        viewer.infoBox.container.style.animation  = "none";
+        
+        // Kill the sliding animation, the load event fires mid animation and causes weird resizing issues
+        const infoBoxInner = viewer.infoBox.container.querySelector('.cesium-infoBox');
+        if (infoBoxInner) {
+            infoBoxInner.style.transition = "none";
+            infoBoxInner.style.animation  = "none";
+        }
+
         viewer.infoBox.frame.addEventListener('load', function () {
             const doc = viewer.infoBox.frame.contentDocument;
+            if (!doc) return;
 
-            // ✅ Force the iframe element itself to the correct width immediately
-            viewer.infoBox.frame.style.width = "320px";
+            viewer.infoBox.frame.style.width   = "100%";
+            viewer.infoBox.frame.style.height  = "100%";
+            viewer.infoBox.frame.style.display = "block";
 
             const style = doc.createElement('style');
             style.textContent = `
-                /* ✅ Lock the root element width so content doesn't render narrow */
                 html, body {
-                    width: 320px;
-                    min-width: 320px;
-                }
-
-                * { box-sizing: border-box; }
-
-                body {
+                    width: 320px !important;
+                    min-width: 320px !important;
                     margin: 0;
+                    padding: 0;
+                    overflow-x: hidden;
+                    background: #fdf6e3;
+                }
+                body {
                     padding: 14px;
                     font-family: Arial, sans-serif;
-                    background: #fdf6e3;
                     color: #333;
                     overflow-y: auto;
-                    overflow-x: hidden;
                 }
+                * { box-sizing: border-box; }
                 h3 {
                     font-size: 1.1rem;
                     margin: 0 0 8px 0;
@@ -143,9 +152,8 @@
                     color: #555;
                 }
                 img {
-                    width: 100%;
-                    max-width: 100%;
-                    height: auto;
+                    width: 100% !important;
+                    height: auto !important;
                     border-radius: 8px;
                     margin-top: 6px;
                     box-shadow: 0 3px 10px rgba(0,0,0,0.18);
@@ -155,95 +163,91 @@
             doc.head.appendChild(style);
         });
 
-        // 📐 Panel outer dimensions
-        viewer.infoBox.container.style.width  = "320px";
-        viewer.infoBox.container.style.height = "440px";
-
         // ─────────────────────────────────────────────
         // 🌍 Adventure Data
         // ─────────────────────────────────────────────
         const adventures = [
             {
-                title: "Red River Gorge Climbing",
-                lat: 37.8,
-                lon: -83.6,
+                title: "Miguel's Pizza Campsite",
+                lat: 37.784021,
+                lon: -83.681788,
                 image: "Images/Red_River_Gorge_05_2025/Nick_Finn_Posted_05_30_2025.jpg",
-                description: "First outdoor climbing trip with friends."
+                description: "First outdoor climbing trip with the NASA homies. Friday and Nimbus at the campsite behind the notorious Miguel's Pizza."
             },
             {
-                title: "Mount Rainier",
-                lat: 46.8523,
-                lon: -121.7603,
+                title: "Base of Mount Rainier",
+                lat: 46.730453,
+                lon: -121.832175,
                 image: "Images/Rainier.JPEG",
-                description: "Exploring the Pacific Northwest."
+                description: "Sully and I snuck away from Seattle on Harpoon's last day of the internship. The Park Ranger really liked our toy dinosaurs."
             },
             {
-                title: "Glacier National Park",
+                title: "Mt. Henry: Glacier National Park",
                 lat: 48.7596,
                 lon: -113.7870,
                 image: "Images/Glacier.JPEG",
-                description: "Summit hike with incredible views."
+                description: "Summit hike with incredible views and ton of Mountain Goats. Harpoon got a job offer too."
             },
             {
-                title: "Yellowstone",
-                lat: 44.4280,
-                lon: -110.5885,
+                title: "Grand Teton National Park — Horse Trail",
+                lat: 43.776365,
+                lon: -110.734261,
                 image: "Images/Horse.JPEG",
-                description: "One of my favorite shots ever."
+                description: "One of my favorite shots ever. Caught behind some horse back riders on our way up to Lake Solitude"
             },
             {
                 title: "Zion National Park — Angels Landing",
-                lat: 37.2982,
-                lon: -113.0263,
+                lat: 37.269276,
+                lon: -112.947854,
                 image: "Images/AngelsLanding_08_19_2025.JPEG",
                 description: "Angels Landing at 7:50 AM. Pretty sketchy at times, but we made great time."
             },
             {
                 title: "Cyprus — Cape Cavo Greco",
-                lat: 35.1264,
-                lon: 33.4299,
+                lat: 34.960319,
+                lon: 34.084027,
                 image: "Images/Cyprus_Fam.JPEG",
                 description: "Family roots and Mediterranean views. Cape Cavo Greco with Mom and Dad."
             },
             {
                 title: "The Gorge Amphitheater",
-                lat: 46.9645,
-                lon: -119.9845,
+                lat: 47.099714,
+                lon: -119.994275,
                 image: "Images/Gorge.jpg",
                 description: "Bob Dylan concert at the Gorge Amphitheater. Beautiful sunset and even better venue."
             },
             {
                 title: "Lake Colchuck",
-                lat: 47.5318,
-                lon: -120.8290,
+                lat: 47.496330,
+                lon: -120.832133,
                 image: "Images/Colchuck.JPEG",
                 description: "Fun day trip in Washington's Enchantments. Lake Colchuck does not disappoint."
             },
             {
-                title: "Grand Teton National Park",
-                lat: 43.7904,
-                lon: -110.6818,
+                title: "Grand Teton National Park - North Fork Cascade Canyon",
+                lat: 43.778026,
+                lon: -110.826905,
                 image: "Images/Teton_Rock.JPEG",
                 description: "Lake Solitude hike with the Tetons looming in the background."
             },
             {
                 title: "Zion — The Narrows",
-                lat: 37.3097,
-                lon: -112.9479,
+                lat: 37.311619,
+                lon: -112.928935,
                 image: "Images/Narrows_08_19_2025.JPEG",
                 description: "The Narrows just keeps going. A trail that really tested our friendship."
             },
             {
                 title: "Cyprus — Moutti tis Sotiras",
-                lat: 35.6865,
-                lon: 34.5731,
+                lat: 35.064777,
+                lon: 32.324798,
                 image: "Images/Cyprus_Hike.JPEG",
                 description: "Summit hike watching the sun set over the Mediterranean."
             },
             {
                 title: "Cyprus — Yiayia's Visit",
-                lat: 35.15,
-                lon: 33.36,
+                lat: 34.693074,
+                lon: 32.963319,
                 image: "Images/Cyprus_yiayia.JPEG",
                 description: "Lunch with Yiayia and family at my dad's sister's house."
             }
