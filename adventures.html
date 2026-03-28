@@ -92,26 +92,40 @@
     </footer>
 
     <script>
-        // 🔑 Cesium Ion token
+// 🔑 Cesium Ion token
         Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDU0MWJiOC00YWM1LTQwMDItODFiYS00YzMyNGIwMTc3OGIiLCJpZCI6NDEwMjMwLCJpYXQiOjE3NzQ2NDc4NjN9.2lHv7QJPf2mTxkkO-ymcjwTyX2RmohXUjwvKFM_nd_Y";
 
         const viewer = new Cesium.Viewer('cesiumContainer', {
-            terrain: Cesium.Terrain.fromWorldTerrain()
+            terrain: Cesium.Terrain.fromWorldTerrain(),
+            sceneMode: Cesium.SceneMode.SCENE2D
         });
 
         // 📐 Panel dimensions
         viewer.infoBox.container.style.width      = "320px";
         viewer.infoBox.container.style.height     = "440px";
-        viewer.infoBox.container.style.transition = "none";   // ← kill slide animation
+        viewer.infoBox.container.style.transition = "none";
         viewer.infoBox.container.style.animation  = "none";
-        
-        // Kill the sliding animation, the load event fires mid animation and causes weird resizing issues
+
+        // Kill the sliding animation from the parent page stylesheet too
+        const killAnim = document.createElement('style');
+        killAnim.textContent = `
+            .cesium-infoBox,
+            .cesium-infoBox-visible {
+                transition: none !important;
+                animation: none !important;
+                width: 320px !important;
+            }
+        `;
+        document.head.appendChild(killAnim);
+
+        // Kill animation on the inner element as well
         const infoBoxInner = viewer.infoBox.container.querySelector('.cesium-infoBox');
         if (infoBoxInner) {
             infoBoxInner.style.transition = "none";
             infoBoxInner.style.animation  = "none";
         }
 
+        // 🎨 Style the infoBox iframe every time it loads
         viewer.infoBox.frame.addEventListener('load', function () {
             const doc = viewer.infoBox.frame.contentDocument;
             if (!doc) return;
@@ -162,6 +176,23 @@
             `;
             doc.head.appendChild(style);
         });
+
+        // 🔥 Pre-warm the infoBox iframe before the user clicks anything
+        // This forces the iframe through its first load cycle at startup
+        // so the first real pin click renders at full width immediately
+        const dummy = viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(0, 0),
+            name: ' ',
+            description: ' '
+        });
+
+        setTimeout(() => {
+            viewer.selectedEntity = dummy;          // open infoBox → triggers iframe load
+            setTimeout(() => {
+                viewer.selectedEntity = undefined;  // close — user never sees this
+                viewer.entities.remove(dummy);      // clean up
+            }, 300);
+        }, 1000);
 
         // ─────────────────────────────────────────────
         // 🌍 Adventure Data
@@ -258,7 +289,7 @@
         // ─────────────────────────────────────────────
         adventures.forEach(place => {
             viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 5000),
+                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 3000),
                 billboard: {
                     image: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
                     scale: 0.05,
