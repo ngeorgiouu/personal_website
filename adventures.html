@@ -13,33 +13,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-
-        body {
-            font-family: 'Lato', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #fdf6e3;
-        }
-
+        /* ── Page layout ── */
         header {
             background: url('Images/Panorama_3.JPEG') no-repeat center center/cover;
             color: white;
             text-align: center;
             padding: 50px 20px;
+            min-height: 200px;
         }
 
         header h1 {
-            font-family: 'Playfair Display', serif;
             font-size: 3rem;
             margin: 0;
             text-shadow: 0 2px 12px rgba(0,0,0,0.45);
-        }
-
-        header h2 {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-top: 10px;
         }
 
         section {
@@ -48,28 +34,13 @@
             margin: 0 auto;
         }
 
-        section > h2 {
-            font-family: 'Playfair Display', serif;
-            color: #7c4a03;
-            font-size: 1.8rem;
-            margin-bottom: 4px;
-        }
-
-        section > p {
-            color: #666;
-            font-size: 0.95rem;
-            margin-top: 0;
-            margin-bottom: 16px;
-        }
-
-        /* ── Layout: globe + panel side by side ── */
+        /* ── Globe + panel layout ── */
         .map-wrapper {
             display: flex;
             gap: 20px;
             align-items: flex-start;
         }
 
-        /* 🌍 Globe container */
         #cesiumContainer {
             flex: 1 1 auto;
             height: 600px;
@@ -79,7 +50,7 @@
             cursor: pointer;
         }
 
-        /* ── Custom side panel ── */
+        /* ── Side panel ── */
         #adventure-panel {
             width: 300px;
             flex: 0 0 300px;
@@ -103,7 +74,6 @@
             pointer-events: auto;
         }
 
-        /* Placeholder state */
         .panel-placeholder {
             display: flex;
             flex-direction: column;
@@ -116,10 +86,6 @@
             gap: 16px;
         }
 
-        .panel-placeholder svg {
-            opacity: 0.35;
-        }
-
         .panel-placeholder p {
             font-size: 0.88rem;
             line-height: 1.6;
@@ -127,12 +93,11 @@
             margin: 0;
         }
 
-        /* Image area */
         #panel-img-wrap {
             width: 100%;
-            height: 210px;
+            height: 380px;
             overflow: hidden;
-            flex: 0 0 210px;
+            flex: 0 0 380px;
             background: #e8d9bc;
             position: relative;
         }
@@ -149,7 +114,6 @@
             transform: scale(1.04);
         }
 
-        /* Location badge */
         .panel-badge {
             position: absolute;
             bottom: 10px;
@@ -164,18 +128,16 @@
             border-radius: 20px;
         }
 
-        /* Text area */
         #panel-body {
-            padding: 18px 18px 14px;
+            padding: 12px 18px; 
             flex: 1;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;            
         }
 
         #panel-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.15rem;
             color: #7c4a03;
             margin: 0;
@@ -192,7 +154,6 @@
             margin: 0;
         }
 
-        /* Close button */
         #panel-close {
             position: absolute;
             top: 10px;
@@ -207,47 +168,23 @@
             line-height: 28px;
             text-align: center;
             cursor: pointer;
-            z-index: 10;
             transition: background 0.2s;
             padding: 0;
         }
 
-        #panel-close:hover {
-            background: rgba(0,0,0,0.7);
-        }
+        #panel-close:hover { background: rgba(0,0,0,0.7); }
 
-        /* Hint text */
         .click-hint {
-            display: flex;
-            align-items: center;
-            gap: 6px;
             font-size: 0.78rem;
             color: #b08850;
             font-style: italic;
-            margin-top: 4px;
             margin-bottom: 12px;
         }
 
-        .click-hint::before {
-            content: "📍";
-            font-style: normal;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #333;
-            color: white;
-            margin-top: 40px;
-        }
-
-        /* Suppress Cesium's own infoBox */
+        /* Suppress Cesium's built-in infoBox */
         .cesium-infoBox,
-        .cesium-viewer-infoBoxContainer {
-            display: none !important;
-        }
+        .cesium-viewer-infoBoxContainer { display: none !important; }
 
-        /* Responsive: stack on narrow screens */
         @media (max-width: 780px) {
             .map-wrapper { flex-direction: column; }
             #adventure-panel {
@@ -257,10 +194,8 @@
                 min-height: 320px;
                 transform: translateY(10px);
             }
-            #adventure-panel.visible {
-                transform: translateY(0);
-            }
-            #panel-img-wrap { height: 180px; flex: 0 0 180px; }
+            #adventure-panel.visible { transform: translateY(0); }
+            #panel-img-wrap { height: 260px; flex: 0 0 260px; }
         }
     </style>
 </head>
