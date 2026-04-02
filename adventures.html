@@ -10,9 +10,13 @@
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.111/Build/Cesium/Cesium.js"></script>
 
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Lato', Arial, sans-serif;
             margin: 0;
             padding: 0;
             background: #fdf6e3;
@@ -26,8 +30,10 @@
         }
 
         header h1 {
+            font-family: 'Playfair Display', serif;
             font-size: 3rem;
             margin: 0;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.45);
         }
 
         header h2 {
@@ -38,18 +44,193 @@
 
         section {
             padding: 20px;
-            max-width: 1000px;
+            max-width: 1280px;
             margin: 0 auto;
+        }
+
+        section > h2 {
+            font-family: 'Playfair Display', serif;
+            color: #7c4a03;
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        section > p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        /* ── Layout: globe + panel side by side ── */
+        .map-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
         }
 
         /* 🌍 Globe container */
         #cesiumContainer {
-            width: 100%;
+            flex: 1 1 auto;
             height: 600px;
-            margin-top: 20px;
-            border-radius: 10px;
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+            cursor: pointer;
+        }
+
+        /* ── Custom side panel ── */
+        #adventure-panel {
+            width: 300px;
+            flex: 0 0 300px;
+            height: 600px;
+            background: #fff8ee;
+            border-radius: 14px;
+            box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e8d9bc;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateX(12px);
+            pointer-events: none;
+        }
+
+        #adventure-panel.visible {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        /* Placeholder state */
+        .panel-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 30px 20px;
+            text-align: center;
+            color: #bba882;
+            gap: 16px;
+        }
+
+        .panel-placeholder svg {
+            opacity: 0.35;
+        }
+
+        .panel-placeholder p {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            font-style: italic;
+            margin: 0;
+        }
+
+        /* Image area */
+        #panel-img-wrap {
+            width: 100%;
+            height: 210px;
+            overflow: hidden;
+            flex: 0 0 210px;
+            background: #e8d9bc;
+            position: relative;
+        }
+
+        #panel-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.45s ease;
+        }
+
+        #panel-img-wrap:hover img {
+            transform: scale(1.04);
+        }
+
+        /* Location badge */
+        .panel-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 12px;
+            background: rgba(0,0,0,0.52);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 20px;
+        }
+
+        /* Text area */
+        #panel-body {
+            padding: 18px 18px 14px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #panel-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: #7c4a03;
+            margin: 0;
+            line-height: 1.3;
+            border-bottom: 2px solid #f59e42;
+            padding-bottom: 8px;
+        }
+
+        #panel-desc {
+            font-size: 0.88rem;
+            line-height: 1.65;
+            color: #555;
+            font-style: italic;
+            margin: 0;
+        }
+
+        /* Close button */
+        #panel-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.45);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-size: 1rem;
+            line-height: 28px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.2s;
+            padding: 0;
+        }
+
+        #panel-close:hover {
+            background: rgba(0,0,0,0.7);
+        }
+
+        /* Hint text */
+        .click-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: #b08850;
+            font-style: italic;
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+
+        .click-hint::before {
+            content: "📍";
+            font-style: normal;
         }
 
         footer {
@@ -59,13 +240,34 @@
             color: white;
             margin-top: 40px;
         }
+
+        /* Suppress Cesium's own infoBox */
+        .cesium-infoBox,
+        .cesium-viewer-infoBoxContainer {
+            display: none !important;
+        }
+
+        /* Responsive: stack on narrow screens */
+        @media (max-width: 780px) {
+            .map-wrapper { flex-direction: column; }
+            #adventure-panel {
+                width: 100%;
+                flex: 0 0 auto;
+                height: auto;
+                min-height: 320px;
+                transform: translateY(10px);
+            }
+            #adventure-panel.visible {
+                transform: translateY(0);
+            }
+            #panel-img-wrap { height: 180px; flex: 0 0 180px; }
+        }
     </style>
 </head>
 
 <body>
     <header>
         <h1>Adventure Map</h1>
-        <h2>Pins from My Journey</h2>
     </header>
 
     <nav>
@@ -78,13 +280,36 @@
 
     <section>
         <h2>My Adventures</h2>
-        <p>
-            A collection of some of my favorite adventures—now mapped across the globe. 
-            Click any location to explore photos and memories from each trip.
-        </p>
+        <p>A collection of some of my favorite adventures—now mapped across the globe.</p>
+        <p class="click-hint">Click any pin to explore photos and memories from each trip.</p>
 
-        <!-- 🌍 Globe -->
-        <div id="cesiumContainer"></div>
+        <div class="map-wrapper">
+            <!-- 🌍 Globe -->
+            <div id="cesiumContainer"></div>
+
+            <!-- Custom side panel (lives outside the Cesium GUI) -->
+            <div id="adventure-panel">
+                <!-- Placeholder shown before any pin is clicked -->
+                <div class="panel-placeholder" id="panel-placeholder">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#c8a96e" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                        <circle cx="12" cy="9" r="2.5"/>
+                    </svg>
+                    <p>Select a pin on the globe to see photos and notes from each adventure.</p>
+                </div>
+
+                <!-- Content shown after a pin is clicked -->
+                <div id="panel-img-wrap" style="display:none; position:relative;">
+                    <img id="panel-img" src="" alt="" />
+                    <span class="panel-badge" id="panel-badge"></span>
+                    <button id="panel-close" title="Close">✕</button>
+                </div>
+                <div id="panel-body" style="display:none;">
+                    <h3 id="panel-title"></h3>
+                    <p id="panel-desc"></p>
+                </div>
+            </div>
+        </div>
     </section>
 
     <footer>
@@ -92,107 +317,14 @@
     </footer>
 
     <script>
-// 🔑 Cesium Ion token
+        // 🔑 Cesium Ion token
         Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDU0MWJiOC00YWM1LTQwMDItODFiYS00YzMyNGIwMTc3OGIiLCJpZCI6NDEwMjMwLCJpYXQiOjE3NzQ2NDc4NjN9.2lHv7QJPf2mTxkkO-ymcjwTyX2RmohXUjwvKFM_nd_Y";
 
         const viewer = new Cesium.Viewer('cesiumContainer', {
             terrain: Cesium.Terrain.fromWorldTerrain(),
-            sceneMode: Cesium.SceneMode.SCENE2D
+            infoBox: false,              // ← disable built-in infoBox entirely
+            selectionIndicator: false    // ← no green selection ring
         });
-
-        // 📐 Panel dimensions
-        viewer.infoBox.container.style.width      = "320px";
-        viewer.infoBox.container.style.height     = "440px";
-        viewer.infoBox.container.style.transition = "none";
-        viewer.infoBox.container.style.animation  = "none";
-
-        // Kill the sliding animation from the parent page stylesheet too
-        const killAnim = document.createElement('style');
-        killAnim.textContent = `
-            .cesium-infoBox,
-            .cesium-infoBox-visible {
-                transition: none !important;
-                animation: none !important;
-                width: 320px !important;
-            }
-        `;
-        document.head.appendChild(killAnim);
-
-        // Kill animation on the inner element as well
-        const infoBoxInner = viewer.infoBox.container.querySelector('.cesium-infoBox');
-        if (infoBoxInner) {
-            infoBoxInner.style.transition = "none";
-            infoBoxInner.style.animation  = "none";
-        }
-
-        // 🎨 Style the infoBox iframe every time it loads
-        viewer.infoBox.frame.addEventListener('load', function () {
-            const doc = viewer.infoBox.frame.contentDocument;
-            if (!doc) return;
-
-            viewer.infoBox.frame.style.width   = "100%";
-            viewer.infoBox.frame.style.height  = "100%";
-            viewer.infoBox.frame.style.display = "block";
-
-            const style = doc.createElement('style');
-            style.textContent = `
-                html, body {
-                    width: 320px !important;
-                    min-width: 320px !important;
-                    margin: 0;
-                    padding: 0;
-                    overflow-x: hidden;
-                    background: #fdf6e3;
-                }
-                body {
-                    padding: 14px;
-                    font-family: Arial, sans-serif;
-                    color: #333;
-                    overflow-y: auto;
-                }
-                * { box-sizing: border-box; }
-                h3 {
-                    font-size: 1.1rem;
-                    margin: 0 0 8px 0;
-                    color: #b45309;
-                    border-bottom: 2px solid #f59e42;
-                    padding-bottom: 6px;
-                }
-                p {
-                    font-size: 0.88rem;
-                    line-height: 1.55;
-                    margin: 8px 0 10px 0;
-                    font-style: italic;
-                    color: #555;
-                }
-                img {
-                    width: 100% !important;
-                    height: auto !important;
-                    border-radius: 8px;
-                    margin-top: 6px;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
-                    display: block;
-                }
-            `;
-            doc.head.appendChild(style);
-        });
-
-        // 🔥 Pre-warm the infoBox iframe before the user clicks anything
-        // This forces the iframe through its first load cycle at startup
-        // so the first real pin click renders at full width immediately
-        const dummy = viewer.entities.add({
-            position: Cesium.Cartesian3.fromDegrees(0, 0),
-            name: ' ',
-            description: ' '
-        });
-
-        setTimeout(() => {
-            viewer.selectedEntity = dummy;          // open infoBox → triggers iframe load
-            setTimeout(() => {
-                viewer.selectedEntity = undefined;  // close — user never sees this
-                viewer.entities.remove(dummy);      // clean up
-            }, 300);
-        }, 1000);
 
         // ─────────────────────────────────────────────
         // 🌍 Adventure Data
@@ -200,6 +332,7 @@
         const adventures = [
             {
                 title: "Miguel's Pizza Campsite",
+                badge: "Red River Gorge, KY",
                 lat: 37.784021,
                 lon: -83.681788,
                 image: "Images/Red_River_Gorge_05_2025/Nick_Finn_Posted_05_30_2025.jpg",
@@ -207,6 +340,7 @@
             },
             {
                 title: "Base of Mount Rainier",
+                badge: "Washington, USA",
                 lat: 46.730453,
                 lon: -121.832175,
                 image: "Images/Rainier.JPEG",
@@ -214,20 +348,23 @@
             },
             {
                 title: "Mt. Henry: Glacier National Park",
+                badge: "Montana, USA",
                 lat: 48.7596,
                 lon: -113.7870,
                 image: "Images/Glacier.JPEG",
                 description: "Summit hike with incredible views and ton of Mountain Goats. Harpoon got a job offer too."
             },
             {
-                title: "Grand Teton National Park — Horse Trail",
+                title: "Grand Teton — Horse Trail",
+                badge: "Wyoming, USA",
                 lat: 43.776365,
                 lon: -110.734261,
                 image: "Images/Horse.JPEG",
-                description: "One of my favorite shots ever. Caught behind some horse back riders on our way up to Lake Solitude"
+                description: "One of my favorite shots ever. Caught behind some horse back riders on our way up to Lake Solitude."
             },
             {
-                title: "Zion National Park — Angels Landing",
+                title: "Zion — Angels Landing",
+                badge: "Utah, USA",
                 lat: 37.269276,
                 lon: -112.947854,
                 image: "Images/AngelsLanding_08_19_2025.JPEG",
@@ -235,6 +372,7 @@
             },
             {
                 title: "Cyprus — Cape Cavo Greco",
+                badge: "Cyprus",
                 lat: 34.960319,
                 lon: 34.084027,
                 image: "Images/Cyprus_Fam.JPEG",
@@ -242,6 +380,7 @@
             },
             {
                 title: "The Gorge Amphitheater",
+                badge: "Washington, USA",
                 lat: 47.099714,
                 lon: -119.994275,
                 image: "Images/Gorge.jpg",
@@ -249,13 +388,15 @@
             },
             {
                 title: "Lake Colchuck",
+                badge: "Washington, USA",
                 lat: 47.496330,
                 lon: -120.832133,
                 image: "Images/Colchuck.JPEG",
                 description: "Fun day trip in Washington's Enchantments. Lake Colchuck does not disappoint."
             },
             {
-                title: "Grand Teton National Park - North Fork Cascade Canyon",
+                title: "Grand Teton — North Fork Cascade Canyon",
+                badge: "Wyoming, USA",
                 lat: 43.778026,
                 lon: -110.826905,
                 image: "Images/Teton_Rock.JPEG",
@@ -263,6 +404,7 @@
             },
             {
                 title: "Zion — The Narrows",
+                badge: "Utah, USA",
                 lat: 37.311619,
                 lon: -112.928935,
                 image: "Images/Narrows_08_19_2025.JPEG",
@@ -270,6 +412,7 @@
             },
             {
                 title: "Cyprus — Moutti tis Sotiras",
+                badge: "Cyprus",
                 lat: 35.064777,
                 lon: 32.324798,
                 image: "Images/Cyprus_Hike.JPEG",
@@ -277,6 +420,7 @@
             },
             {
                 title: "Cyprus — Yiayia's Visit",
+                badge: "Cyprus",
                 lat: 34.693074,
                 lon: 32.963319,
                 image: "Images/Cyprus_yiayia.JPEG",
@@ -285,27 +429,75 @@
         ];
 
         // ─────────────────────────────────────────────
-        // 📍 Add pins — visible in both 2D and 3D
+        // 📍 Add pins — store data in entity.properties
         // ─────────────────────────────────────────────
         adventures.forEach(place => {
             viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 3000),
+                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 0),
                 billboard: {
                     image: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
                     scale: 0.05,
-                    heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND, // float above terrain
-                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,               // pin tip at location
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,         // never hidden by terrain
-                    pixelOffset: new Cesium.Cartesian2(0, -10)                  // slight upward nudge
+                    heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    pixelOffset: new Cesium.Cartesian2(0, -10)
                 },
                 name: place.title,
-                description: `
-                    <h3>${place.title}</h3>
-                    <p>${place.description}</p>
-                    <img src="${place.image}" alt="${place.title}" />
-                `
+                properties: new Cesium.PropertyBag({
+                    badge:       place.badge,
+                    image:       place.image,
+                    description: place.description
+                })
             });
         });
+
+        // ─────────────────────────────────────────────
+        // 🖱️ Click handler → populate the custom panel
+        // ─────────────────────────────────────────────
+        const panel       = document.getElementById('adventure-panel');
+        const placeholder = document.getElementById('panel-placeholder');
+        const imgWrap     = document.getElementById('panel-img-wrap');
+        const img         = document.getElementById('panel-img');
+        const badgeEl     = document.getElementById('panel-badge');
+        const body        = document.getElementById('panel-body');
+        const titleEl     = document.getElementById('panel-title');
+        const descEl      = document.getElementById('panel-desc');
+        const closeBtn    = document.getElementById('panel-close');
+
+        function showPanel(entity) {
+            const props      = entity.properties;
+            titleEl.textContent = entity.name;
+            descEl.textContent  = props.description.getValue();
+            badgeEl.textContent = props.badge.getValue();
+            img.src             = props.image.getValue();
+            img.alt             = entity.name;
+
+            placeholder.style.display = 'none';
+            imgWrap.style.display     = 'block';
+            body.style.display        = 'flex';
+
+            panel.classList.add('visible');
+        }
+
+        function hidePanel() {
+            panel.classList.remove('visible');
+            setTimeout(() => {
+                if (!panel.classList.contains('visible')) {
+                    imgWrap.style.display     = 'none';
+                    body.style.display        = 'none';
+                    placeholder.style.display = 'flex';
+                }
+            }, 320);
+        }
+
+        closeBtn.addEventListener('click', hidePanel);
+
+        viewer.screenSpaceEventHandler.setInputAction(function (click) {
+            const picked = viewer.scene.pick(click.position);
+            if (Cesium.defined(picked) && Cesium.defined(picked.id) && picked.id.properties) {
+                showPanel(picked.id);
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         // ✨ Start centered on the US
         viewer.camera.flyTo({
