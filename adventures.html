@@ -31,7 +31,7 @@
 
         section {
             padding: 40px 20px;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -52,170 +52,147 @@
             color: white;
         }
 
-        /* ── Map layout ── */
-        .map-wrapper {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
-
+        /* ── Centered full-width map ── */
         #cesiumContainer {
-            flex: 1 1 auto;
-            height: 620px;
-            border-radius: 10px;
+            width: 100%;
+            height: 550px;
+            border-radius: 14px;
             overflow: hidden;
             border: 1px solid #333;
             cursor: pointer;
         }
 
-        /* ── Side panel ── */
-        #adventure-panel {
-            width: 320px;
-            flex: 0 0 320px;
-            height: 620px;
-            background: #111;
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #333;
-            transition: opacity 0.35s ease, transform 0.35s ease;
-            opacity: 0;
-            transform: translateX(16px);
-            pointer-events: none;
-        }
-
-        #adventure-panel.visible {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: auto;
-        }
-
-        /* Placeholder */
-        .panel-placeholder {
-            display: flex;
-            flex-direction: column;
+        /* ── Modal overlay ── */
+        #adventure-modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            z-index: 9999;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            padding: 30px 24px;
-            text-align: center;
-            gap: 14px;
+            padding: 20px;
         }
 
-        .panel-placeholder p {
-            font-size: 0.85rem;
-            line-height: 1.6;
-            font-style: italic;
-            margin: 0;
-            color: #555;
+        #adventure-modal-bg.open {
+            display: flex;
         }
 
-        /* ── Photo — the hero of the panel ── */
-        #panel-img-wrap {
+        #adventure-modal {
+            background: #111;
+            border-radius: 16px;
+            overflow-y: auto;
             width: 100%;
-            height: 460px;
-            flex: 0 0 460px;
-            overflow: hidden;
+            max-width: 510px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            position: center;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+            animation: modalIn 0.28s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.94) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Photo hero */
+        #modal-img-wrap {
+            width: 100%;
             position: relative;
             background: #000;
         }
 
-        #panel-img {
+        #modal-img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
             display: block;
-            transition: transform 0.5s ease, opacity 0.45s ease;
             opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
-        #panel-img.loaded { opacity: 1; }
+        #modal-img.loaded { opacity: 1; }
 
-        #panel-img-wrap:hover #panel-img { transform: scale(1.04); }
-
-        /* Bottom gradient so badge text is always readable */
-        #panel-img-wrap::after {
+        /* Bottom gradient for badge */
+        #modal-img-wrap::after {
             content: '';
             position: absolute;
             left: 0; right: 0; bottom: 0;
-            height: 40%;
-            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.72));
+            height: 45%;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.75));
             pointer-events: none;
         }
 
-        .panel-badge {
+        .modal-badge {
             position: absolute;
-            bottom: 13px;
-            left: 14px;
+            bottom: 16px;
+            left: 18px;
             color: #fff;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: bold;
-            letter-spacing: 0.09em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             z-index: 2;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
         }
 
-        .panel-badge::before {
+        .modal-badge::before {
             content: '';
             display: inline-block;
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: #ff6347;
             flex-shrink: 0;
         }
 
-        #panel-close {
+        #modal-close {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0,0,0,0.5);
+            top: 14px;
+            right: 14px;
+            background: rgba(0,0,0,0.55);
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.25);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 0.9rem;
+            width: 34px;
+            height: 34px;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: background 0.2s;
-            z-index: 3;
+            z-index: 10;
             padding: 0;
         }
 
-        #panel-close:hover { background: rgba(255,99,71,0.85); }
+        #modal-close:hover { background: rgba(255, 99, 71, 0.85); }
 
-        /* ── Text strip — compact, lets photo dominate ── */
-        #panel-body {
-            flex: 1;
-            padding: 14px 18px;
+        /* Text body */
+        #modal-body {
+            padding: 20px 24px 24px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             background: #111;
-            overflow-y: auto;
         }
-
-        #panel-title {
-            font-size: 1rem;
+        #modal-title {
+            font-size: 1.2rem;
             font-weight: bold;
             color: #fff;
             margin: 0;
-            padding-bottom: 8px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #ff6347;
             line-height: 1.3;
         }
 
-        #panel-desc {
-            font-size: 0.85rem;
-            line-height: 1.65;
-            color: #aaa;
+        #modal-desc {
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: #bbb;
             font-style: italic;
             margin: 0;
         }
@@ -224,16 +201,8 @@
         .cesium-infoBox,
         .cesium-viewer-infoBoxContainer { display: none !important; }
 
-        @media (max-width: 780px) {
-            .map-wrapper { flex-direction: column; }
-            #adventure-panel {
-                width: 100%;
-                flex: 0 0 auto;
-                height: auto;
-                transform: translateY(10px);
-            }
-            #adventure-panel.visible { transform: translateY(0); }
-            #panel-img-wrap { height: 280px; flex: 0 0 280px; }
+        @media (max-width: 600px) {
+            #modal-img-wrap { height: 260px; flex: 0 0 260px; }
         }
     </style>
 </head>
@@ -252,34 +221,26 @@
     </nav>
 
     <section>
-        <h2>My Adventures</h2>
-        <p style="text-align:center; margin-bottom:6px;">A collection of some of my favorite adventures — now mapped across the globe.</p>
-        <p class="click-hint">Click any pin to explore photos and memories from each trip.</p>
+        <h2>Interactive Trekkers Globe (ITR)</h2>
+        <p style="text-align: center;">A collection of some of my favorite adventures mapped across the globe.</p>
 
-        <div class="map-wrapper">
-            <div id="cesiumContainer"></div>
+        <div id="cesiumContainer"></div>
+    </section>
 
-            <div id="adventure-panel">
-                <div class="panel-placeholder" id="panel-placeholder">
-                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                        <circle cx="12" cy="9" r="2.5"/>
-                    </svg>
-                    <p>Select a pin on the globe to see photos and notes from each adventure.</p>
-                </div>
-
-                <div id="panel-img-wrap" style="display:none; position:relative;">
-                    <img id="panel-img" src="" alt="" />
-                    <span class="panel-badge" id="panel-badge"></span>
-                    <button id="panel-close" title="Close">✕</button>
-                </div>
-                <div id="panel-body" style="display:none;">
-                    <h3 id="panel-title"></h3>
-                    <p id="panel-desc"></p>
-                </div>
+    <!-- Modal overlay -->
+    <div id="adventure-modal-bg">
+        <div id="adventure-modal">
+            <div id="modal-img-wrap">
+                <img id="modal-img" src="" alt="" />
+                <span class="modal-badge" id="modal-badge"></span>
+                <button id="modal-close" title="Close">✕</button>
+            </div>
+            <div id="modal-body">
+                <h3 id="modal-title"></h3>
+                <p id="modal-desc"></p>
             </div>
         </div>
-    </section>
+    </div>
 
     <footer>
         <p>&copy; 2024 Nicholas Georgiou. All rights reserved.</p>
@@ -381,106 +342,152 @@
             }
         ];
 
-        // Custom dot pins — red for USA, gold for international
-        function makePinCanvas(color) {
-            const size = 48;
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            const cx = size / 2, cy = size / 2;
-            // outer halo
-            ctx.beginPath();
-            ctx.arc(cx, cy, 14, 0, Math.PI * 2);
-            ctx.fillStyle = color + '28';
-            ctx.fill();
-            // mid ring
-            ctx.beginPath();
-            ctx.arc(cx, cy, 9, 0, Math.PI * 2);
-            ctx.fillStyle = color + '55';
-            ctx.fill();
-            // solid dot
-            ctx.beginPath();
-            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
-            ctx.fillStyle = color;
-            ctx.fill();
-            // white center
-            ctx.beginPath();
-            ctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
-            return canvas;
+        /*
+         * Photo-frame pin builder (Apple Maps style)
+         * Loads the image then draws a circular photo inside
+         * a white-bordered bubble with a small downward point.
+         * Falls back to a colored dot if the image can't load.
+         */
+        function makePhotoPinCanvas(imgSrc, accentColor, onReady) {
+            const S = 80;          // canvas size
+            const R = 28;          // circle radius
+            const CX = S / 2;
+            const CY = R + 4;      // circle center (leave room for border at top)
+            const TIP_H = 10;      // height of the downward triangle tip
+
+            function draw(photoImg) {
+                const canvas = document.createElement('canvas');
+                canvas.width = S;
+                canvas.height = CY + R + TIP_H + 4;
+                const ctx = canvas.getContext('2d');
+
+                const totalH = canvas.height;
+
+                // Drop-shadow approximation via dark circle slightly offset
+                ctx.beginPath();
+                ctx.arc(CX + 1, CY + 2, R + 4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,0,0,0.28)';
+                ctx.fill();
+
+                // White border ring
+                ctx.beginPath();
+                ctx.arc(CX, CY, R + 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+
+                // Tip / pointer
+                ctx.beginPath();
+                ctx.moveTo(CX - 9, CY + R + 2);
+                ctx.lineTo(CX + 9, CY + R + 2);
+                ctx.lineTo(CX, totalH - 2);
+                ctx.closePath();
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+
+                // Clip to circle and draw photo (or fallback color)
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(CX, CY, R, 0, Math.PI * 2);
+                ctx.clip();
+
+                if (photoImg) {
+                    ctx.drawImage(photoImg, CX - R, CY - R, R * 2, R * 2);
+                } else {
+                    ctx.fillStyle = accentColor;
+                    ctx.fillRect(CX - R, CY - R, R * 2, R * 2);
+                }
+
+                ctx.restore();
+
+                onReady(canvas);
+            }
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => draw(img);
+            img.onerror = () => draw(null);
+            img.src = imgSrc;
         }
 
         adventures.forEach(place => {
             const isInternational = !place.badge.includes('USA') && !place.badge.includes('KY');
             const pinColor = isInternational ? '#f59e0b' : '#ff6347';
-            viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 0),
-                billboard: {
-                    image: makePinCanvas(pinColor),
-                    width: 28,
-                    height: 28,
-                    heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                },
-                name: place.title,
-                properties: new Cesium.PropertyBag({
-                    badge:       place.badge,
-                    image:       place.image,
-                    description: place.description
-                })
+
+            makePhotoPinCanvas(place.image, pinColor, (canvas) => {
+                const totalH = canvas.height;
+                const entity = viewer.entities.add({
+                    position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 0),
+                    billboard: {
+                        image: canvas,
+                        width: canvas.width,
+                        height: totalH,
+                        heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(0, 0),
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                        scaleByDistance: new Cesium.NearFarScalar(1.5e6, 1.0, 2.5e7, 0.4),
+                    },
+                    name: place.title,
+                    properties: new Cesium.PropertyBag({
+                        badge:       place.badge,
+                        image:       place.image,
+                        description: place.description
+                    })
+                });
             });
         });
 
-        const panel       = document.getElementById('adventure-panel');
-        const placeholder = document.getElementById('panel-placeholder');
-        const imgWrap     = document.getElementById('panel-img-wrap');
-        const imgEl       = document.getElementById('panel-img');
-        const badgeEl     = document.getElementById('panel-badge');
-        const body        = document.getElementById('panel-body');
-        const titleEl     = document.getElementById('panel-title');
-        const descEl      = document.getElementById('panel-desc');
-        const closeBtn    = document.getElementById('panel-close');
+        /* ── Modal logic ── */
+        const modalBg   = document.getElementById('adventure-modal-bg');
+        const modalImg  = document.getElementById('modal-img');
+        const modalBadge = document.getElementById('modal-badge');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc  = document.getElementById('modal-desc');
+        const modalClose = document.getElementById('modal-close');
 
-        function showPanel(entity) {
+        function openModal(entity) {
             const props = entity.properties;
-            titleEl.textContent = entity.name;
-            descEl.textContent  = props.description.getValue();
-            badgeEl.textContent = props.badge.getValue();
+            modalTitle.textContent = entity.name;
+            modalDesc.textContent  = props.description.getValue();
+            modalBadge.textContent = props.badge.getValue();
 
-            // Reset opacity so each new image fades in fresh
-            imgEl.classList.remove('loaded');
-            imgEl.src = '';
+            modalImg.classList.remove('loaded');
+            modalImg.src = '';
+            modalImg.onload = () => {
+                modalImg.classList.add('loaded');
+                setTimeout(() => {
+                    const modal = document.getElementById('adventure-modal');
+                    modal.scrollTop = modal.scrollHeight / 2;
+                }, 50);
+            };
+            modalImg.src = props.image.getValue();
+            modalImg.alt = entity.name;
 
-            placeholder.style.display = 'none';
-            imgWrap.style.display     = 'block';
-            body.style.display        = 'flex';
-            panel.classList.add('visible');
-
-            imgEl.onload = () => imgEl.classList.add('loaded');
-            imgEl.src = props.image.getValue();
-            imgEl.alt = entity.name;
+            modalBg.classList.add('open');
+            document.body.style.overflow = 'hidden';
         }
 
-        function hidePanel() {
-            panel.classList.remove('visible');
-            setTimeout(() => {
-                if (!panel.classList.contains('visible')) {
-                    imgWrap.style.display     = 'none';
-                    body.style.display        = 'none';
-                    placeholder.style.display = 'flex';
-                }
-            }, 350);
+        function closeModal() {
+            modalBg.classList.remove('open');
+            document.body.style.overflow = '';
         }
 
-        closeBtn.addEventListener('click', hidePanel);
+        modalClose.addEventListener('click', closeModal);
+
+        // Close on backdrop click
+        modalBg.addEventListener('click', (e) => {
+            if (e.target === modalBg) closeModal();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
 
         viewer.screenSpaceEventHandler.setInputAction(function (click) {
             const picked = viewer.scene.pick(click.position);
             if (Cesium.defined(picked) && Cesium.defined(picked.id) && picked.id.properties) {
-                showPanel(picked.id);
+                openModal(picked.id);
             }
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
