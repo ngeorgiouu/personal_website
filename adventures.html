@@ -37,14 +37,6 @@
 
         section h2 { text-align: center; margin-bottom: 10px; }
 
-        .click-hint {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #888;
-            font-style: italic;
-            margin-bottom: 24px;
-        }
-
         footer {
             text-align: center;
             padding: 20px;
@@ -54,12 +46,13 @@
 
         /* ── Centered full-width map ── */
         #cesiumContainer {
-            width: 100%;
-            height: 550px;
+            width: 80%;
+            height: 525px;
             border-radius: 14px;
             overflow: hidden;
             border: 1px solid #333;
             cursor: pointer;
+            margin: 0 auto;
         }
 
         /* ── Modal overlay ── */
@@ -83,13 +76,13 @@
             border-radius: 16px;
             overflow-y: auto;
             width: 100%;
-            max-width: 510px;
+            max-width: 480px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
-            position: center;
             box-shadow: 0 24px 80px rgba(0,0,0,0.7);
             animation: modalIn 0.28s ease;
+            scroll-behavior: auto;
         }
 
         @keyframes modalIn {
@@ -97,33 +90,36 @@
             to   { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Photo hero */
-        #modal-img-wrap {
+        /* ── Photo carousel ── */
+        #modal-carousel {
             width: 100%;
             position: relative;
             background: #000;
+            flex-shrink: 0;
+            overflow: hidden;
+            /* Smoothly animate height when switching between portrait/landscape images */
+            transition: height 0.35s ease;
         }
 
-        #modal-img {
+        /* Carousel track */
+        #carousel-track {
+            display: flex;
+            transition: transform 0.35s ease;
+            will-change: transform;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
+            position: relative;
+        }
+
+        .carousel-slide img {
             width: 100%;
             height: auto;
             display: block;
-            opacity: 0;
-            transition: opacity 0.4s ease;
         }
 
-        #modal-img.loaded { opacity: 1; }
-
-        /* Bottom gradient for badge */
-        #modal-img-wrap::after {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; bottom: 0;
-            height: 45%;
-            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.75));
-            pointer-events: none;
-        }
-
+        /* Badge (location) */
         .modal-badge {
             position: absolute;
             bottom: 16px;
@@ -149,6 +145,66 @@
             flex-shrink: 0;
         }
 
+        /* Photo date overlay */
+        .photo-date {
+            position: absolute;
+            bottom: 16px;
+            right: 18px;
+            color: rgba(255,255,255,1);
+            font-size: 0.875rem;
+            z-index: 10;
+            font-style: italic;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+        }
+
+        /* Carousel nav arrows */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 3;
+            transition: background 0.2s;
+            padding: 0;
+        }
+
+        .carousel-btn:hover { background: rgba(255,99,71,0.8); }
+        #carousel-prev { left: 10px; }
+        #carousel-next { right: 10px; }
+
+        /* Carousel dots */
+        #carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 3;
+        }
+
+        .carousel-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .carousel-dot.active { background: #fff; }
+
+        /* Close button */
         #modal-close {
             position: absolute;
             top: 14px;
@@ -171,6 +227,20 @@
 
         #modal-close:hover { background: rgba(255, 99, 71, 0.85); }
 
+        /* Photo counter (e.g. "2 / 4") */
+        #photo-counter {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            padding: 4px 10px;
+            z-index: 3;
+            display: none;
+        }
+
         /* Text body */
         #modal-body {
             padding: 20px 24px 24px;
@@ -179,6 +249,7 @@
             gap: 8px;
             background: #111;
         }
+
         #modal-title {
             font-size: 1.2rem;
             font-weight: bold;
@@ -202,7 +273,7 @@
         .cesium-viewer-infoBoxContainer { display: none !important; }
 
         @media (max-width: 600px) {
-            #modal-img-wrap { height: 260px; flex: 0 0 260px; }
+            #adventure-modal { max-height: 95vh; }
         }
     </style>
 </head>
@@ -230,11 +301,17 @@
     <!-- Modal overlay -->
     <div id="adventure-modal-bg">
         <div id="adventure-modal">
-            <div id="modal-img-wrap">
-                <img id="modal-img" src="" alt="" />
-                <span class="modal-badge" id="modal-badge"></span>
-                <button id="modal-close" title="Close">✕</button>
+            <!-- Carousel -->
+            <div id="modal-carousel">
+                <div id="carousel-track"></div>
+                <span id="modal-badge" class="modal-badge"></span>
+                <button id="carousel-prev" class="carousel-btn">&#8249;</button>
+                <button id="carousel-next" class="carousel-btn">&#8250;</button>
+                <div id="carousel-dots"></div>
+                <span id="photo-counter"></span>
+                <button id="modal-close" title="Close">&#x2715;</button>
             </div>
+            <!-- Text -->
             <div id="modal-body">
                 <h3 id="modal-title"></h3>
                 <p id="modal-desc"></p>
@@ -255,127 +332,159 @@
             selectionIndicator: false
         });
 
+        /*
+         * Adventures data
+         * Each entry can have:
+         *   - image: string (single photo, backward-compatible)
+         *   - photos: array of { src, date } for multiple images
+         * If both are present, `photos` takes priority.
+         * The first photo (or `image`) is used for the globe pin thumbnail.
+         */
         const adventures = [
             {
                 title: "Miguel's Pizza Campsite",
                 badge: "Red River Gorge, KY",
                 lat: 37.784021, lon: -83.681788,
-                image: "Images/Red_River_Gorge_05_2025/Nick_Finn_Posted_05_30_2025.jpg",
+                photos: [
+                    { src: "Images/Miguels_05_2025.JPEG", date: "May 30, 2025" },
+                    { src: "Images/Red_River_Gorge_05_2025/Nick_Finn_Posted_05_30_2025.jpg", date: "May 30, 2025" },
+                ],
                 description: "First outdoor climbing trip with the NASA homies. Friday and Nimbus at the campsite behind the notorious Miguel's Pizza."
             },
             {
                 title: "Base of Mount Rainier",
                 badge: "Washington, USA",
                 lat: 46.730453, lon: -121.832175,
-                image: "Images/Rainier.JPEG",
+                photos: [
+                    { src: "Images/Rainier.JPEG", date: "" }
+                ],
                 description: "Sully and I snuck away from Seattle on Harpoon's last day of the internship. The Park Ranger really liked our toy dinosaurs."
             },
             {
-                title: "Mt. Henry: Glacier National Park",
+                title: "Glacier National Park: Mt. Henry",
                 badge: "Montana, USA",
                 lat: 48.7596, lon: -113.7870,
-                image: "Images/Glacier.JPEG",
-                description: "Summit hike with incredible views and a ton of Mountain Goats. Harpoon got a job offer too."
+                photos: [
+                    { src: "Images/Glacier.JPEG", date: "Aug 13, 2024" },
+                    { src: "Images/Glacier_2.JPEG", date: "Aug 13, 2024" },
+                    { src: "Images/Glacier_3.JPEG", date: "Aug 13, 2024" },
+                    { src: "Images/Glacier_4.JPEG", date: "Aug 13, 2024" },
+                    { src: "Images/Glacier_5.JPEG", date: "Aug 13, 2024" },
+                    { src: "Images/Glacier_6.JPEG", date: "Aug 13, 2024" }
+                ],
+                description: "Nimbus, Sully, and Harpoon take on Glacier National Park. ‘How about that ride in. I guess that’s why they call it sin city’ - Alan Garner (The Hangover). Seriously though, the ride into Glacier was one for the ages. We started out zipping through desolate northern Montana approaching our campground blaring ‘Ecstasy of Gold’ because it just made sense. We set up Green Grommet with the first ever Timelapse! There is room for improvement, like camera positioning, but luckily it wasn’t our last campsite. We gravitated towards Mt. Henry for some unknown reason (Harpoon and underlining ties). However it did not disappoint. One of the more vertical hikes we did, it was a real butt kicker. Saw a ton of goats, and luckily they were chillers. Took some funny panoramas at the top, and Harpoon accepted a job offer on top of Mt. Henry, what a funny place to do so. Seal team 3 descended right before sunset. Got back to camp, bought the craziest looking IPA cans known to man, and watched the sun go down over the lake. We later celebrated Harpoon’s achievements with, you guessed it, SOUP NIGHT!!!"
             },
             {
-                title: "Grand Teton — Horse Trail",
-                badge: "Wyoming, USA",
-                lat: 43.776365, lon: -110.734261,
-                image: "Images/Horse.JPEG",
-                description: "One of my favorite shots ever. Caught behind some horse back riders on our way up to Lake Solitude."
-            },
-            {
-                title: "Zion — Angels Landing",
+                title: "Zion: Angels Landing",
                 badge: "Utah, USA",
                 lat: 37.269276, lon: -112.947854,
-                image: "Images/AngelsLanding_08_19_2025.JPEG",
+                photos: [
+                    { src: "Images/AngelsLanding_08_19_2025.JPEG", date: "Aug 19, 2025" }
+                ],
                 description: "Angels Landing at 7:50 AM. Pretty sketchy at times, but we made great time."
             },
             {
-                title: "Cyprus — Cape Cavo Greco",
+                title: "Cape Cavo Greco",
                 badge: "Cyprus",
                 lat: 34.960319, lon: 34.084027,
-                image: "Images/Cyprus_Fam.JPEG",
+                photos: [
+                    { src: "Images/Cyprus_Fam.JPEG", date: "" }
+                ],
                 description: "Family roots and Mediterranean views. Cape Cavo Greco with Mom and Dad."
             },
             {
-                title: "The Gorge Amphitheater",
+                title: "The Gorge Amphitheater: Bob Dylan Concert",
                 badge: "Washington, USA",
                 lat: 47.099714, lon: -119.994275,
-                image: "Images/Gorge.jpg",
+                photos: [
+                    { src: "Images/Gorge.jpg", date: "Aug 10, 2024" },
+                    { src: "Images/Gorge_2.JPEG", date: "Aug 10, 2024" }
+                ],
                 description: "Bob Dylan concert at the Gorge Amphitheater. Beautiful sunset and even better venue."
             },
             {
-                title: "Lake Colchuck",
+                title: "The Enchantments: Lake Colchuck",
                 badge: "Washington, USA",
                 lat: 47.496330, lon: -120.832133,
-                image: "Images/Colchuck.JPEG",
+                photos: [
+                    { src: "Images/Colchuck.JPEG", date: "Aug 11, 2024" },
+                    { src: "Images/Colchuck_2.JPEG", date: "Aug 11, 2024" },
+                    { src: "Images/Colchuck_3.JPEG", date: "Aug 11, 2024" }
+                ],
                 description: "Fun day trip in Washington's Enchantments. Lake Colchuck does not disappoint."
             },
             {
-                title: "Grand Teton — North Fork Cascade Canyon",
+                title: "Grand Teton: North Fork Cascade Canyon",
                 badge: "Wyoming, USA",
                 lat: 43.778026, lon: -110.826905,
-                image: "Images/Teton_Rock.JPEG",
-                description: "Lake Solitude hike with the Tetons looming in the background."
+                photos: [
+                    { src: "Images/Teton_Rock.JPEG", date: "Aug 16, 2024" },
+                    { src: "Images/Horse.JPEG", date: "Aug 16, 2024" },
+                ],
+                description: "The Tetons. Doesn’t really need that Grand of an introduction (hahaha). The crew woke up at the crack of dawn and booked it down from our campsite in Yellowstone. Having absolutely no idea where we were going to be sleeping that night, we started the trek of ‘Lake Solitude’. Started off behind a horse crew and got my favorite picture of the trip. The crews hiking chemistry was at an all time high, jokes were flowing, and parents were loving us! For every sports team merchandise we saw on the trial, we pretended to be fans. The people loved us. By far are longest hike of the trip, we were lucky enough to witness a moose AND some black bears off in the distance. Harpoon unfortunately was unable to give them a bear hug #niceshirt. We reached the lake and took it all in. Played some hacky with an incredible backdrop. Jumped in the water to cool off. We did some epic canon balls. Did our silly dances and headed back down. Harpoon snipped a campground at the last second. We shared some drinks and stories with our German neighbor we met. By golly did he have some tales. Watched the sunset at over the Tetons and hit the hay. What a day."
             },
             {
                 title: "Zion — The Narrows",
                 badge: "Utah, USA",
                 lat: 37.311619, lon: -112.928935,
-                image: "Images/Narrows_08_19_2025.JPEG",
+                photos: [
+                    { src: "Images/Narrows_08_19_2025.JPEG", date: "Aug 19, 2024" },
+                    { src: "Images/Narrows_2.JPEG", date: "Aug 19, 2024" },
+                ],
                 description: "The Narrows just keeps going. A trail that really tested our friendship."
             },
             {
                 title: "Cyprus — Moutti tis Sotiras",
                 badge: "Cyprus",
                 lat: 35.064777, lon: 32.324798,
-                image: "Images/Cyprus_Hike.JPEG",
+                photos: [
+                    { src: "Images/Cyprus_Hike.JPEG", date: "" }
+                ],
                 description: "Summit hike watching the sun set over the Mediterranean."
             },
             {
                 title: "Cyprus — Yiayia's Visit",
                 badge: "Cyprus",
                 lat: 34.693074, lon: 32.963319,
-                image: "Images/Cyprus_yiayia.JPEG",
+                photos: [
+                    { src: "Images/Cyprus_yiayia.JPEG", date: "" }
+                ],
                 description: "Lunch with Yiayia and family at my dad's sister's house."
             }
         ];
 
-        /*
-         * Photo-frame pin builder (Apple Maps style)
-         * Loads the image then draws a circular photo inside
-         * a white-bordered bubble with a small downward point.
-         * Falls back to a colored dot if the image can't load.
-         */
+        /* Normalize each adventure so it always has a `photos` array */
+        adventures.forEach(a => {
+            if (!a.photos || a.photos.length === 0) {
+                a.photos = [{ src: a.image || '', date: '' }];
+            }
+        });
+
+        /* ── Photo-pin canvas builder ── */
         function makePhotoPinCanvas(imgSrc, accentColor, onReady) {
-            const S = 80;          // canvas size
-            const R = 28;          // circle radius
+            const S = 80;
+            const R = 28;
             const CX = S / 2;
-            const CY = R + 4;      // circle center (leave room for border at top)
-            const TIP_H = 10;      // height of the downward triangle tip
+            const CY = R + 4;
+            const TIP_H = 10;
 
             function draw(photoImg) {
                 const canvas = document.createElement('canvas');
                 canvas.width = S;
                 canvas.height = CY + R + TIP_H + 4;
                 const ctx = canvas.getContext('2d');
-
                 const totalH = canvas.height;
 
-                // Drop-shadow approximation via dark circle slightly offset
                 ctx.beginPath();
                 ctx.arc(CX + 1, CY + 2, R + 4, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(0,0,0,0.28)';
                 ctx.fill();
 
-                // White border ring
                 ctx.beginPath();
                 ctx.arc(CX, CY, R + 4, 0, Math.PI * 2);
                 ctx.fillStyle = '#ffffff';
                 ctx.fill();
 
-                // Tip / pointer
                 ctx.beginPath();
                 ctx.moveTo(CX - 9, CY + R + 2);
                 ctx.lineTo(CX + 9, CY + R + 2);
@@ -384,7 +493,6 @@
                 ctx.fillStyle = '#ffffff';
                 ctx.fill();
 
-                // Clip to circle and draw photo (or fallback color)
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(CX, CY, R, 0, Math.PI * 2);
@@ -398,7 +506,6 @@
                 }
 
                 ctx.restore();
-
                 onReady(canvas);
             }
 
@@ -412,15 +519,15 @@
         adventures.forEach(place => {
             const isInternational = !place.badge.includes('USA') && !place.badge.includes('KY');
             const pinColor = isInternational ? '#f59e0b' : '#ff6347';
+            const thumbSrc = place.photos[0].src;
 
-            makePhotoPinCanvas(place.image, pinColor, (canvas) => {
-                const totalH = canvas.height;
-                const entity = viewer.entities.add({
+            makePhotoPinCanvas(thumbSrc, pinColor, (canvas) => {
+                viewer.entities.add({
                     position: Cesium.Cartesian3.fromDegrees(place.lon, place.lat, 0),
                     billboard: {
                         image: canvas,
                         width: canvas.width,
-                        height: totalH,
+                        height: canvas.height,
                         heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
                         verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
                         pixelOffset: new Cesium.Cartesian2(0, 0),
@@ -430,20 +537,126 @@
                     name: place.title,
                     properties: new Cesium.PropertyBag({
                         badge:       place.badge,
-                        image:       place.image,
+                        photos:      JSON.stringify(place.photos),
                         description: place.description
                     })
                 });
             });
         });
 
-        /* ── Modal logic ── */
-        const modalBg   = document.getElementById('adventure-modal-bg');
-        const modalImg  = document.getElementById('modal-img');
+        /* ── Carousel state ── */
+        let carouselPhotos    = [];
+        let carouselIndex     = 0;
+        let slideAspectRatios = [];   // stores naturalHeight/naturalWidth per slide
+
+        const modalBg    = document.getElementById('adventure-modal-bg');
         const modalBadge = document.getElementById('modal-badge');
         const modalTitle = document.getElementById('modal-title');
         const modalDesc  = document.getElementById('modal-desc');
         const modalClose = document.getElementById('modal-close');
+        const carousel   = document.getElementById('modal-carousel');
+        const track      = document.getElementById('carousel-track');
+        const dotsWrap   = document.getElementById('carousel-dots');
+        const prevBtn    = document.getElementById('carousel-prev');
+        const nextBtn    = document.getElementById('carousel-next');
+        const counter    = document.getElementById('photo-counter');
+
+        /* Apply the stored aspect ratio for slide `idx` to the carousel height */
+        function applyHeight(idx) {
+            const ratio = slideAspectRatios[idx];
+            if (ratio != null) {
+                carousel.style.height = (carousel.offsetWidth * ratio) + 'px';
+            }
+        }
+
+        function buildCarousel(photos) {
+            carouselPhotos    = photos;
+            carouselIndex     = 0;
+            slideAspectRatios = new Array(photos.length).fill(null);
+
+            track.innerHTML    = '';
+            dotsWrap.innerHTML = '';
+
+            photos.forEach((p, i) => {
+                /* ── Slide ── */
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+
+                const img = document.createElement('img');
+                img.src = p.src;
+                img.alt = '';
+
+                /* Measure the image and cache its aspect ratio */
+                function storeRatio() {
+                    if (!img.naturalWidth) return;
+                    slideAspectRatios[i] = img.naturalHeight / img.naturalWidth;
+                    /* If this is the slide currently on screen, update height immediately */
+                    if (i === carouselIndex) applyHeight(i);
+                }
+
+                if (img.complete && img.naturalWidth) {
+                    storeRatio();
+                } else {
+                    img.addEventListener('load', storeRatio, { once: true });
+                }
+
+                slide.appendChild(img);
+
+                /* Date overlay */
+                if (p.date) {
+                    const dateEl = document.createElement('span');
+                    dateEl.className  = 'photo-date';
+                    dateEl.textContent = p.date;
+                    slide.appendChild(dateEl);
+                }
+
+                track.appendChild(slide);
+
+                /* ── Dot ── */
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => goTo(i));
+                dotsWrap.appendChild(dot);
+            });
+
+            /* Show / hide multi-image controls */
+            const multi = photos.length > 1;
+            prevBtn.style.display  = multi ? 'flex'  : 'none';
+            nextBtn.style.display  = multi ? 'flex'  : 'none';
+            dotsWrap.style.display = multi ? 'flex'  : 'none';
+            counter.style.display  = multi ? 'block' : 'none';
+
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+
+            /* Sync dots */
+            dotsWrap.querySelectorAll('.carousel-dot')
+                .forEach((d, i) => d.classList.toggle('active', i === carouselIndex));
+
+            counter.textContent = `${carouselIndex + 1} / ${carouselPhotos.length}`;
+
+            /* Resize the carousel container to match the current image's aspect ratio */
+            applyHeight(carouselIndex);
+        }
+
+        function goTo(idx) {
+            carouselIndex = (idx + carouselPhotos.length) % carouselPhotos.length;
+            updateCarousel();
+        }
+
+        prevBtn.addEventListener('click', () => goTo(carouselIndex - 1));
+        nextBtn.addEventListener('click', () => goTo(carouselIndex + 1));
+
+        /* Touch / swipe support */
+        let touchStartX = 0;
+        track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend',   e => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 40) goTo(carouselIndex + (dx < 0 ? 1 : -1));
+        });
 
         function openModal(entity) {
             const props = entity.properties;
@@ -451,20 +664,24 @@
             modalDesc.textContent  = props.description.getValue();
             modalBadge.textContent = props.badge.getValue();
 
-            modalImg.classList.remove('loaded');
-            modalImg.src = '';
-            modalImg.onload = () => {
-                modalImg.classList.add('loaded');
-                setTimeout(() => {
-                    const modal = document.getElementById('adventure-modal');
-                    modal.scrollTop = modal.scrollHeight / 2;
-                }, 50);
-            };
-            modalImg.src = props.image.getValue();
-            modalImg.alt = entity.name;
-
+            /* Open the modal FIRST so the carousel has a real offsetWidth,
+               even when images are already cached by the browser. */
             modalBg.classList.add('open');
             document.body.style.overflow = 'hidden';
+
+            const photos = JSON.parse(props.photos.getValue());
+            buildCarousel(photos);
+
+            /* Scroll modal to top after first image loads (or immediately if cached) */
+            const modal    = document.getElementById('adventure-modal');
+            const firstImg = track.querySelector('img');
+            const scrollTop = () => { modal.scrollTop = 0; };
+
+            if (firstImg && !firstImg.complete) {
+                firstImg.addEventListener('load', scrollTop, { once: true });
+            } else {
+                scrollTop();
+            }
         }
 
         function closeModal() {
@@ -473,15 +690,13 @@
         }
 
         modalClose.addEventListener('click', closeModal);
+        modalBg.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
 
-        // Close on backdrop click
-        modalBg.addEventListener('click', (e) => {
-            if (e.target === modalBg) closeModal();
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { closeModal(); return; }
+            if (!modalBg.classList.contains('open')) return;
+            if (e.key === 'ArrowLeft')  goTo(carouselIndex - 1);
+            if (e.key === 'ArrowRight') goTo(carouselIndex + 1);
         });
 
         viewer.screenSpaceEventHandler.setInputAction(function (click) {
