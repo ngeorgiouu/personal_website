@@ -71,7 +71,10 @@
             display: flex;
         }
 
+        /* ── KEY FIX: modal needs position:relative so absolutely-positioned
+           buttons inside it anchor to the card, not the carousel ── */
         #adventure-modal {
+            position: relative;
             background: #111;
             border-radius: 16px;
             overflow-y: auto;
@@ -157,10 +160,12 @@
             text-shadow: 0 1px 4px rgba(0,0,0,0.8);
         }
 
-        /* Carousel nav arrows */
+        /* ── KEY FIX: Carousel nav arrows now live OUTSIDE #modal-carousel
+           so they are never clipped by overflow:hidden when height animates.
+           They position relative to #adventure-modal instead. ── */
         .carousel-btn {
             position: absolute;
-            top: 50%;
+            /* top is set dynamically in JS to stay centered over the carousel */
             transform: translateY(-50%);
             background: rgba(0,0,0,0.5);
             color: #fff;
@@ -173,16 +178,18 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 3;
+            z-index: 20;
             transition: background 0.2s;
             padding: 0;
+            /* Prevent the button itself from scrolling with modal content */
+            pointer-events: auto;
         }
 
         .carousel-btn:hover { background: rgba(255,99,71,0.8); }
         #carousel-prev { left: 10px; }
         #carousel-next { right: 10px; }
 
-        /* Carousel dots */
+        /* Carousel dots — stay inside the carousel, fine to clip if needed */
         #carousel-dots {
             position: absolute;
             bottom: 10px;
@@ -204,7 +211,8 @@
 
         .carousel-dot.active { background: #fff; }
 
-        /* Close button */
+        /* ── KEY FIX: Close button also lives OUTSIDE #modal-carousel,
+           anchored to #adventure-modal top-right. Always visible. ── */
         #modal-close {
             position: absolute;
             top: 14px;
@@ -221,13 +229,13 @@
             justify-content: center;
             cursor: pointer;
             transition: background 0.2s;
-            z-index: 10;
+            z-index: 20;
             padding: 0;
         }
 
         #modal-close:hover { background: rgba(255, 99, 71, 0.85); }
 
-        /* Photo counter (e.g. "2 / 4") */
+        /* Photo counter (e.g. "2 / 4") — stays inside carousel, fine */
         #photo-counter {
             position: absolute;
             top: 14px;
@@ -301,16 +309,23 @@
     <!-- Modal overlay -->
     <div id="adventure-modal-bg">
         <div id="adventure-modal">
-            <!-- Carousel -->
+
+            <!-- Carousel: only the track, badge, dots, and counter live here.
+                 The arrows and close button are OUTSIDE this div so they are
+                 never clipped by overflow:hidden when the height animates. -->
             <div id="modal-carousel">
                 <div id="carousel-track"></div>
                 <span id="modal-badge" class="modal-badge"></span>
-                <button id="carousel-prev" class="carousel-btn">&#8249;</button>
-                <button id="carousel-next" class="carousel-btn">&#8250;</button>
                 <div id="carousel-dots"></div>
                 <span id="photo-counter"></span>
-                <button id="modal-close" title="Close">&#x2715;</button>
             </div>
+
+            <!-- ✅ Buttons outside the carousel — anchored to #adventure-modal,
+                 never clipped, always visible on swipe/slide change -->
+            <button id="carousel-prev" class="carousel-btn">&#8249;</button>
+            <button id="carousel-next" class="carousel-btn">&#8250;</button>
+            <button id="modal-close" title="Close">&#x2715;</button>
+
             <!-- Text -->
             <div id="modal-body">
                 <h3 id="modal-title"></h3>
@@ -366,13 +381,12 @@
                 lat: 48.7596, lon: -113.7870,
                 photos: [
                     { src: "Images/Glacier.JPEG", date: "Aug 13, 2024" },
-                    { src: "Images/Glacier_2.JPEG", date: "Aug 13, 2024" },
-                    { src: "Images/Glacier_3.JPEG", date: "Aug 13, 2024" },
+                    { src: "Images/Glacier_6.JPEG", date: "Aug 13, 2024" },
                     { src: "Images/Glacier_4.JPEG", date: "Aug 13, 2024" },
                     { src: "Images/Glacier_5.JPEG", date: "Aug 13, 2024" },
-                    { src: "Images/Glacier_6.JPEG", date: "Aug 13, 2024" }
+                    { src: "Images/Glacier_3.JPEG", date: "Aug 13, 2024" }
                 ],
-                description: "Nimbus, Sully, and Harpoon take on Glacier National Park. ‘How about that ride in. I guess that’s why they call it sin city’ - Alan Garner (The Hangover). Seriously though, the ride into Glacier was one for the ages. We started out zipping through desolate northern Montana approaching our campground blaring ‘Ecstasy of Gold’ because it just made sense. We set up Green Grommet with the first ever Timelapse! There is room for improvement, like camera positioning, but luckily it wasn’t our last campsite. We gravitated towards Mt. Henry for some unknown reason (Harpoon and underlining ties). However it did not disappoint. One of the more vertical hikes we did, it was a real butt kicker. Saw a ton of goats, and luckily they were chillers. Took some funny panoramas at the top, and Harpoon accepted a job offer on top of Mt. Henry, what a funny place to do so. Seal team 3 descended right before sunset. Got back to camp, bought the craziest looking IPA cans known to man, and watched the sun go down over the lake. We later celebrated Harpoon’s achievements with, you guessed it, SOUP NIGHT!!!"
+                description: "Nimbus, Sully, and Harpoon take on Glacier National Park. 'How about that ride in. I guess that's why they call it sin city' - Alan Garner (The Hangover). Seriously though, the ride into Glacier was one for the ages. We started out zipping through desolate northern Montana approaching our campground blaring 'Ecstasy of Gold' because it just made sense. We set up Green Grommet with the first ever Timelapse! There is room for improvement, like camera positioning, but luckily it wasn't our last campsite. We gravitated towards Mt. Henry for some unknown reason (Harpoon and underlining ties). However it did not disappoint. One of the more vertical hikes we did, it was a real butt kicker. Saw a ton of goats, and luckily they were chillers. Took some funny panoramas at the top, and Harpoon accepted a job offer on top of Mt. Henry, what a funny place to do so. Seal team 3 descended right before sunset. Got back to camp, bought the craziest looking IPA cans known to man, and watched the sun go down over the lake. We later celebrated Harpoon's achievements with, you guessed it, SOUP NIGHT!!!"
             },
             {
                 title: "Zion: Angels Landing",
@@ -421,7 +435,7 @@
                     { src: "Images/Teton_Rock.JPEG", date: "Aug 16, 2024" },
                     { src: "Images/Horse.JPEG", date: "Aug 16, 2024" },
                 ],
-                description: "The Tetons. Doesn’t really need that Grand of an introduction (hahaha). The crew woke up at the crack of dawn and booked it down from our campsite in Yellowstone. Having absolutely no idea where we were going to be sleeping that night, we started the trek of ‘Lake Solitude’. Started off behind a horse crew and got my favorite picture of the trip. The crews hiking chemistry was at an all time high, jokes were flowing, and parents were loving us! For every sports team merchandise we saw on the trial, we pretended to be fans. The people loved us. By far are longest hike of the trip, we were lucky enough to witness a moose AND some black bears off in the distance. Harpoon unfortunately was unable to give them a bear hug #niceshirt. We reached the lake and took it all in. Played some hacky with an incredible backdrop. Jumped in the water to cool off. We did some epic canon balls. Did our silly dances and headed back down. Harpoon snipped a campground at the last second. We shared some drinks and stories with our German neighbor we met. By golly did he have some tales. Watched the sunset at over the Tetons and hit the hay. What a day."
+                description: "The Tetons. Doesn't really need that Grand of an introduction (hahaha). The crew woke up at the crack of dawn and booked it down from our campsite in Yellowstone. Having absolutely no idea where we were going to be sleeping that night, we started the trek of 'Lake Solitude'. Started off behind a horse crew and got my favorite picture of the trip. The crews hiking chemistry was at an all time high, jokes were flowing, and parents were loving us! For every sports team merchandise we saw on the trial, we pretended to be fans. The people loved us. By far are longest hike of the trip, we were lucky enough to witness a moose AND some black bears off in the distance. Harpoon unfortunately was unable to give them a bear hug #niceshirt. We reached the lake and took it all in. Played some hacky with an incredible backdrop. Jumped in the water to cool off. We did some epic canon balls. Did our silly dances and headed back down. Harpoon snipped a campground at the last second. We shared some drinks and stories with our German neighbor we met. By golly did he have some tales. Watched the sunset at over the Tetons and hit the hay. What a day."
             },
             {
                 title: "Zion — The Narrows",
@@ -561,11 +575,19 @@
         const nextBtn    = document.getElementById('carousel-next');
         const counter    = document.getElementById('photo-counter');
 
-        /* Apply the stored aspect ratio for slide `idx` to the carousel height */
+        /* Apply the stored aspect ratio for slide `idx` to the carousel height,
+           then reposition the nav arrows to stay vertically centered over it. */
         function applyHeight(idx) {
             const ratio = slideAspectRatios[idx];
             if (ratio != null) {
-                carousel.style.height = (carousel.offsetWidth * ratio) + 'px';
+                const h = carousel.offsetWidth * ratio;
+                carousel.style.height = h + 'px';
+
+                // ✅ KEY FIX: re-center arrows relative to #adventure-modal.
+                // carousel.offsetTop gives the carousel's top within the modal.
+                const arrowTop = carousel.offsetTop + h / 2;
+                prevBtn.style.top = arrowTop + 'px';
+                nextBtn.style.top = arrowTop + 'px';
             }
         }
 
@@ -638,7 +660,7 @@
 
             counter.textContent = `${carouselIndex + 1} / ${carouselPhotos.length}`;
 
-            /* Resize the carousel container to match the current image's aspect ratio */
+            /* Resize carousel + reposition arrows for the current image */
             applyHeight(carouselIndex);
         }
 
