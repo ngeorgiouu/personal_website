@@ -55,6 +55,48 @@
             margin: 0 auto;
         }
 
+        /* ── Toggle bar ── */
+        #filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto 18px;
+            width: 80%;
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 2px solid #ccc;
+            background: #fff;
+            color: #555;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .filter-btn:hover {
+            border-color: #aaa;
+            background: #f5f5f5;
+        }
+
+        .filter-btn.active {
+            border-color: #3a7d44;
+            background: #3a7d44;
+            color: #fff;
+        }
+
+        .filter-btn .btn-icon {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
         /* ── Modal overlay ── */
         #adventure-modal-bg {
             display: none;
@@ -71,10 +113,7 @@
             display: flex;
         }
 
-        /* ── KEY FIX: modal needs position:relative so absolutely-positioned
-           buttons inside it anchor to the card, not the carousel ── */
         #adventure-modal {
-            position: relative;
             background: #111;
             border-radius: 16px;
             overflow-y: auto;
@@ -100,11 +139,9 @@
             background: #000;
             flex-shrink: 0;
             overflow: hidden;
-            /* Smoothly animate height when switching between portrait/landscape images */
             transition: height 0.35s ease;
         }
 
-        /* Carousel track */
         #carousel-track {
             display: flex;
             transition: transform 0.35s ease;
@@ -122,7 +159,6 @@
             display: block;
         }
 
-        /* Badge (location) */
         .modal-badge {
             position: absolute;
             bottom: 16px;
@@ -148,7 +184,6 @@
             flex-shrink: 0;
         }
 
-        /* Photo date overlay */
         .photo-date {
             position: absolute;
             bottom: 16px;
@@ -160,12 +195,9 @@
             text-shadow: 0 1px 4px rgba(0,0,0,0.8);
         }
 
-        /* ── KEY FIX: Carousel nav arrows now live OUTSIDE #modal-carousel
-           so they are never clipped by overflow:hidden when height animates.
-           They position relative to #adventure-modal instead. ── */
         .carousel-btn {
             position: absolute;
-            /* top is set dynamically in JS to stay centered over the carousel */
+            top: 50%;
             transform: translateY(-50%);
             background: rgba(0,0,0,0.5);
             color: #fff;
@@ -178,18 +210,15 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 20;
+            z-index: 3;
             transition: background 0.2s;
             padding: 0;
-            /* Prevent the button itself from scrolling with modal content */
-            pointer-events: auto;
         }
 
         .carousel-btn:hover { background: rgba(255,99,71,0.8); }
         #carousel-prev { left: 10px; }
         #carousel-next { right: 10px; }
 
-        /* Carousel dots — stay inside the carousel, fine to clip if needed */
         #carousel-dots {
             position: absolute;
             bottom: 10px;
@@ -211,8 +240,6 @@
 
         .carousel-dot.active { background: #fff; }
 
-        /* ── KEY FIX: Close button also lives OUTSIDE #modal-carousel,
-           anchored to #adventure-modal top-right. Always visible. ── */
         #modal-close {
             position: absolute;
             top: 14px;
@@ -229,13 +256,12 @@
             justify-content: center;
             cursor: pointer;
             transition: background 0.2s;
-            z-index: 20;
+            z-index: 10;
             padding: 0;
         }
 
         #modal-close:hover { background: rgba(255, 99, 71, 0.85); }
 
-        /* Photo counter (e.g. "2 / 4") — stays inside carousel, fine */
         #photo-counter {
             position: absolute;
             top: 14px;
@@ -249,7 +275,6 @@
             display: none;
         }
 
-        /* Text body */
         #modal-body {
             padding: 20px 24px 24px;
             display: flex;
@@ -276,7 +301,6 @@
             margin: 0;
         }
 
-        /* Suppress Cesium built-in UI */
         .cesium-infoBox,
         .cesium-viewer-infoBoxContainer { display: none !important; }
 
@@ -303,30 +327,34 @@
         <h2>Interactive Trekkers Globe (ITR)</h2>
         <p style="text-align: center;">A collection of some of my favorite adventures mapped across the globe.</p>
 
+        <!-- Filter toggle bar -->
+        <div id="filter-bar">
+            <button class="filter-btn active" id="btn-all" onclick="setFilter('all')">
+                <span class="btn-icon">🌍</span> All Adventures
+            </button>
+            <button class="filter-btn" id="btn-golf" onclick="setFilter('golf')">
+                <span class="btn-icon">⛳</span> Golf
+            </button>
+            <button class="filter-btn" id="btn-climbing" onclick="setFilter('climbing')">
+                <span class="btn-icon">🧗</span> Climbing
+            </button>
+        </div>
+
         <div id="cesiumContainer"></div>
     </section>
 
     <!-- Modal overlay -->
     <div id="adventure-modal-bg">
         <div id="adventure-modal">
-
-            <!-- Carousel: only the track, badge, dots, and counter live here.
-                 The arrows and close button are OUTSIDE this div so they are
-                 never clipped by overflow:hidden when the height animates. -->
             <div id="modal-carousel">
                 <div id="carousel-track"></div>
                 <span id="modal-badge" class="modal-badge"></span>
+                <button id="carousel-prev" class="carousel-btn">&#8249;</button>
+                <button id="carousel-next" class="carousel-btn">&#8250;</button>
                 <div id="carousel-dots"></div>
                 <span id="photo-counter"></span>
+                <button id="modal-close" title="Close">&#x2715;</button>
             </div>
-
-            <!-- ✅ Buttons outside the carousel — anchored to #adventure-modal,
-                 never clipped, always visible on swipe/slide change -->
-            <button id="carousel-prev" class="carousel-btn">&#8249;</button>
-            <button id="carousel-next" class="carousel-btn">&#8250;</button>
-            <button id="modal-close" title="Close">&#x2715;</button>
-
-            <!-- Text -->
             <div id="modal-body">
                 <h3 id="modal-title"></h3>
                 <p id="modal-desc"></p>
@@ -349,22 +377,19 @@
 
         /*
          * Adventures data
-         * Each entry can have:
-         *   - image: string (single photo, backward-compatible)
-         *   - photos: array of { src, date } for multiple images
-         * If both are present, `photos` takes priority.
-         * The first photo (or `image`) is used for the globe pin thumbnail.
+         * category: 'golf' marks golf-specific entries; all others default to 'general'
          */
         const adventures = [
             {
                 title: "Miguel's Pizza Campsite",
                 badge: "Red River Gorge, KY",
+                category: "climbing",
                 lat: 37.784021, lon: -83.681788,
                 photos: [
                     { src: "Images/Miguels_05_2025.JPEG", date: "May 30, 2025" },
                     { src: "Images/Red_River_Gorge_05_2025/Nick_Finn_Posted_05_30_2025.jpg", date: "May 30, 2025" },
                 ],
-                description: "First outdoor climbing trip with the NASA homies. Friday and Nimbus at the campsite behind the notorious Miguel's Pizza."
+                description: "First outdoor climbing trip with the NASA homies. We are posted outside Miguel's Pizza and there is a good photo of Friday and Nimbus at the campsite behind the pizza parlor."
             },
             {
                 title: "Base of Mount Rainier",
@@ -378,7 +403,7 @@
             {
                 title: "Glacier National Park: Mt. Henry",
                 badge: "Montana, USA",
-                lat: 48.7596, lon: -113.7870,
+                lat: 48.458218, lon: -113.344772,
                 photos: [
                     { src: "Images/Glacier.JPEG", date: "Aug 13, 2024" },
                     { src: "Images/Glacier_6.JPEG", date: "Aug 13, 2024" },
@@ -388,6 +413,17 @@
                 ],
                 description: "Nimbus, Sully, and Harpoon take on Glacier National Park. 'How about that ride in. I guess that's why they call it sin city' - Alan Garner (The Hangover). Seriously though, the ride into Glacier was one for the ages. We started out zipping through desolate northern Montana approaching our campground blaring 'Ecstasy of Gold' because it just made sense. We set up Green Grommet with the first ever Timelapse! There is room for improvement, like camera positioning, but luckily it wasn't our last campsite. We gravitated towards Mt. Henry for some unknown reason (Harpoon and underlining ties). However it did not disappoint. One of the more vertical hikes we did, it was a real butt kicker. Saw a ton of goats, and luckily they were chillers. Took some funny panoramas at the top, and Harpoon accepted a job offer on top of Mt. Henry, what a funny place to do so. Seal team 3 descended right before sunset. Got back to camp, bought the craziest looking IPA cans known to man, and watched the sun go down over the lake. We later celebrated Harpoon's achievements with, you guessed it, SOUP NIGHT!!!"
             },
+            {    
+                title: "The Home Course",
+                badge: "DuPont, WA",
+                category: "golf",
+                lat: 47.107046, lon: -122.663957,
+                photos: [
+                    { src: "Images/Golf/Home_Course.JPEG", date: "Jan 18, 2026" },
+                    { src: "Images/Golf/Home_Course_2.JPEG", date: "Jan 18, 2026" }
+                ],
+                description: "First round of golf with Harpoon in Washington. This was the day after I moved to Washington, and the first time I ever beat Harpoon in a golf round. Must have let me win"
+            },          
             {
                 title: "Zion: Angels Landing",
                 badge: "Utah, USA",
@@ -395,8 +431,18 @@
                 photos: [
                     { src: "Images/AngelsLanding_08_19_2025.JPEG", date: "Aug 19, 2025" }
                 ],
-                description: "Angels Landing at 7:50 AM. Pretty sketchy at times, but we made great time."
+                description: "Angels Landing at dawn. Pretty sketchy at times (for Sully and Harpoon) but we crushed it. Saw a trail runner coming down as we were going up." 
             },
+            {
+                title: "Sudden Valley Golf Course",
+                badge: "Bellingham, WA",
+                category: "golf",
+                lat: 48.713958, lon: -122.327216,
+                photos: [
+                    { src: "Images/Golf/Sudden_Valley.JPEG", date: "April 5, 2026" }
+                ],
+                description: "One of the wickedest drives up to a golf course. Harpoon and I decided to tip it out. What a difficult golf course. Memorable breakfeast sandwich and burrito at the turn, our guy behind the grill was serving." 
+            },            
             {
                 title: "Cape Cavo Greco",
                 badge: "Cyprus",
@@ -408,7 +454,7 @@
             },
             {
                 title: "The Gorge Amphitheater: Bob Dylan Concert",
-                badge: "Washington, USA",
+                badge: "Spokane, WA",
                 lat: 47.099714, lon: -119.994275,
                 photos: [
                     { src: "Images/Gorge.jpg", date: "Aug 10, 2024" },
@@ -418,7 +464,7 @@
             },
             {
                 title: "The Enchantments: Lake Colchuck",
-                badge: "Washington, USA",
+                badge: "Leavenworth, WA",
                 lat: 47.496330, lon: -120.832133,
                 photos: [
                     { src: "Images/Colchuck.JPEG", date: "Aug 11, 2024" },
@@ -429,7 +475,7 @@
             },
             {
                 title: "Grand Teton: North Fork Cascade Canyon",
-                badge: "Wyoming, USA",
+                badge: "Jenny Lake, WY",
                 lat: 43.778026, lon: -110.826905,
                 photos: [
                     { src: "Images/Teton_Rock.JPEG", date: "Aug 16, 2024" },
@@ -438,41 +484,127 @@
                 description: "The Tetons. Doesn't really need that Grand of an introduction (hahaha). The crew woke up at the crack of dawn and booked it down from our campsite in Yellowstone. Having absolutely no idea where we were going to be sleeping that night, we started the trek of 'Lake Solitude'. Started off behind a horse crew and got my favorite picture of the trip. The crews hiking chemistry was at an all time high, jokes were flowing, and parents were loving us! For every sports team merchandise we saw on the trial, we pretended to be fans. The people loved us. By far are longest hike of the trip, we were lucky enough to witness a moose AND some black bears off in the distance. Harpoon unfortunately was unable to give them a bear hug #niceshirt. We reached the lake and took it all in. Played some hacky with an incredible backdrop. Jumped in the water to cool off. We did some epic canon balls. Did our silly dances and headed back down. Harpoon snipped a campground at the last second. We shared some drinks and stories with our German neighbor we met. By golly did he have some tales. Watched the sunset at over the Tetons and hit the hay. What a day."
             },
             {
-                title: "Zion — The Narrows",
-                badge: "Utah, USA",
+                title: "Zion: The Narrows",
+                badge: "Springdale, UT",
                 lat: 37.311619, lon: -112.928935,
                 photos: [
                     { src: "Images/Narrows_08_19_2025.JPEG", date: "Aug 19, 2024" },
                     { src: "Images/Narrows_2.JPEG", date: "Aug 19, 2024" },
                 ],
-                description: "The Narrows just keeps going. A trail that really tested our friendship."
+                description: "I swear the Narrows has no end. This one really tested our friendship."
             },
             {
-                title: "Cyprus — Moutti tis Sotiras",
-                badge: "Cyprus",
+                title: "Cyprus: Moutti tis Sotiras",
+                badge: "Neo Chorio, Cyprus",
                 lat: 35.064777, lon: 32.324798,
                 photos: [
-                    { src: "Images/Cyprus_Hike.JPEG", date: "" }
+                    { src: "Images/Cyprus_Hike.JPEG", date: "May 24, 2023" }
                 ],
-                description: "Summit hike watching the sun set over the Mediterranean."
+                description: "Summit hike watching the sun set over the Mediterranean. Felicia and I had to manage the darkness on the way down, but was worth the sunset."
             },
             {
-                title: "Cyprus — Yiayia's Visit",
-                badge: "Cyprus",
+                title: "Cyprus: Wind Surfing",
+                badge: "Pyla, Cyprus",
+                lat: 34.978585, lon: 33.700373,
+                photos: [
+                    { src: "Images/Wind_Surfing.JPEG", date: "May 23, 2023" }
+                ],
+                description: "Marinos, Felicia, and I take on wind surfing in the Mediterranean."
+            },
+            {
+                title: "Hampton: Night Out",
+                badge: "Phoebus, VA",
+                lat: 37.022382, lon: -76.313352,
+                photos: [
+                    { src: "Images/Hampton_4th.JPG", date: "July 3, 2025" }
+                ],
+                description: "NASA crew before karaoke at Slyde Clydes."
+            },
+            {
+                title: "New York City: Central Park",
+                badge: "New York, NY",
+                lat: 40.782969, lon: -73.965355,
+                photos: [
+                    { src: "Images/NYC.JPEG", date: "July 27, 2025" }
+                ],
+                description: "Harpoon had work training in NYC so I flew in to visit. Grabbed this shot on a stroll in Central Park."
+            },
+            {
+                title: "Eaglewood Golf Course",
+                badge: "Hampton, VA",
+                category: "golf",
+                lat: 37.08707, lon: -76.36979,
+                photos: [
+                    { src: "Images/Golf/Eaglewood_Picker.JPEG", date: "July 6, 2024" }
+                ],
+                description: "First job as a cart barn boy. Oh man was it a blast. Eaglewood will always be my 'Home Course'."
+            },
+            {
+                title: "Richmond: Bridge Climbing",
+                badge: "Richmond, VA",
+                category: "climbing",
+                lat: 37.530754, lon: -77.445638,
+                photos: [
+                    { src: "Images/Richmond_Bridge.JPEG", date: "July 23, 2025" }
+                ],
+                description: "Andy took me out for some climbing in Richmond. There are some old bridges in Richmond that have been converted into climbing areas. We had a blast and got some good views of the city from the top."
+            },
+            {
+                title: "Cyprus: Christmas Day",
+                badge: "Ypsonas, Cyprus",
+                lat: 34.693174, lon: 32.963294,
+                photos: [
+                    { src: "Images/Yiayia_2.JPEG", date: "Dec 25, 2025" }
+                ],
+                description: "Yiayia and I at Christmas dinner. We got some cool hats on as well."
+            },
+            {
+                title: "Lady Sykes Golf Course",
+                badge: "Overland Park, KS",
+                category: "golf",
+                lat: 38.901082, lon: -94.720720,
+                photos: [
+                    { src: "Images/Golf/Lady_Sykes.JPEG", date: "Jan 10, 2026" }
+                ],
+                description: "Last round in Kansas before the big Washington move. Man those Kansas sunsets are no joke."
+            },
+            {
+                title: "Cyprus: Yiayia's Visit",
+                badge: "Ypsonas,Cyprus",
                 lat: 34.693074, lon: 32.963319,
                 photos: [
-                    { src: "Images/Cyprus_yiayia.JPEG", date: "" }
+                    { src: "Images/Cyprus_yiayia.JPEG", date: "May 23, 2023" }
                 ],
-                description: "Lunch with Yiayia and family at my dad's sister's house."
+                description: "Lunch with Yiayia and family at my dad's sister's house. My sister and cousin are pictured here."
             }
         ];
 
-        /* Normalize each adventure so it always has a `photos` array */
+        /* Normalize each adventure so it always has a `photos` array and a category */
         adventures.forEach(a => {
             if (!a.photos || a.photos.length === 0) {
                 a.photos = [{ src: a.image || '', date: '' }];
             }
+            if (!a.category) a.category = 'general';
         });
+
+        /* ── Filter state ── */
+        let activeFilter = 'all';
+
+        function setFilter(filter) {
+            activeFilter = filter;
+
+            // Update button styles
+            document.getElementById('btn-all').classList.toggle('active', filter === 'all');
+            document.getElementById('btn-golf').classList.toggle('active', filter === 'golf');
+            document.getElementById('btn-climbing').classList.toggle('active', filter === 'climbing');
+
+            // Show/hide entities
+            viewer.entities.values.forEach(entity => {
+                if (!entity.properties) return;
+                const cat = entity.properties.category.getValue();
+                entity.show = (filter === 'all') || (cat === filter);
+            });
+        }
 
         /* ── Photo-pin canvas builder ── */
         function makePhotoPinCanvas(imgSrc, accentColor, onReady) {
@@ -531,8 +663,11 @@
         }
 
         adventures.forEach(place => {
-            const isInternational = !place.badge.includes('USA') && !place.badge.includes('KY');
-            const pinColor = isInternational ? '#f59e0b' : '#ff6347';
+            const isInternational = !place.badge.includes('USA') && !place.badge.includes('KY') && !place.badge.includes('WA');
+            // Golf pins get a green accent; international get amber; domestic get tomato
+            const pinColor = place.category === 'golf' ? '#3a7d44'
+                           : isInternational          ? '#f59e0b'
+                           :                            '#ff6347';
             const thumbSrc = place.photos[0].src;
 
             makePhotoPinCanvas(thumbSrc, pinColor, (canvas) => {
@@ -552,7 +687,8 @@
                     properties: new Cesium.PropertyBag({
                         badge:       place.badge,
                         photos:      JSON.stringify(place.photos),
-                        description: place.description
+                        description: place.description,
+                        category:    place.category
                     })
                 });
             });
@@ -561,7 +697,7 @@
         /* ── Carousel state ── */
         let carouselPhotos    = [];
         let carouselIndex     = 0;
-        let slideAspectRatios = [];   // stores naturalHeight/naturalWidth per slide
+        let slideAspectRatios = [];
 
         const modalBg    = document.getElementById('adventure-modal-bg');
         const modalBadge = document.getElementById('modal-badge');
@@ -575,19 +711,10 @@
         const nextBtn    = document.getElementById('carousel-next');
         const counter    = document.getElementById('photo-counter');
 
-        /* Apply the stored aspect ratio for slide `idx` to the carousel height,
-           then reposition the nav arrows to stay vertically centered over it. */
         function applyHeight(idx) {
             const ratio = slideAspectRatios[idx];
             if (ratio != null) {
-                const h = carousel.offsetWidth * ratio;
-                carousel.style.height = h + 'px';
-
-                // ✅ KEY FIX: re-center arrows relative to #adventure-modal.
-                // carousel.offsetTop gives the carousel's top within the modal.
-                const arrowTop = carousel.offsetTop + h / 2;
-                prevBtn.style.top = arrowTop + 'px';
-                nextBtn.style.top = arrowTop + 'px';
+                carousel.style.height = (carousel.offsetWidth * ratio) + 'px';
             }
         }
 
@@ -600,7 +727,6 @@
             dotsWrap.innerHTML = '';
 
             photos.forEach((p, i) => {
-                /* ── Slide ── */
                 const slide = document.createElement('div');
                 slide.className = 'carousel-slide';
 
@@ -608,11 +734,9 @@
                 img.src = p.src;
                 img.alt = '';
 
-                /* Measure the image and cache its aspect ratio */
                 function storeRatio() {
                     if (!img.naturalWidth) return;
                     slideAspectRatios[i] = img.naturalHeight / img.naturalWidth;
-                    /* If this is the slide currently on screen, update height immediately */
                     if (i === carouselIndex) applyHeight(i);
                 }
 
@@ -624,7 +748,6 @@
 
                 slide.appendChild(img);
 
-                /* Date overlay */
                 if (p.date) {
                     const dateEl = document.createElement('span');
                     dateEl.className  = 'photo-date';
@@ -634,14 +757,12 @@
 
                 track.appendChild(slide);
 
-                /* ── Dot ── */
                 const dot = document.createElement('div');
                 dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
                 dot.addEventListener('click', () => goTo(i));
                 dotsWrap.appendChild(dot);
             });
 
-            /* Show / hide multi-image controls */
             const multi = photos.length > 1;
             prevBtn.style.display  = multi ? 'flex'  : 'none';
             nextBtn.style.display  = multi ? 'flex'  : 'none';
@@ -653,14 +774,9 @@
 
         function updateCarousel() {
             track.style.transform = `translateX(-${carouselIndex * 100}%)`;
-
-            /* Sync dots */
             dotsWrap.querySelectorAll('.carousel-dot')
                 .forEach((d, i) => d.classList.toggle('active', i === carouselIndex));
-
             counter.textContent = `${carouselIndex + 1} / ${carouselPhotos.length}`;
-
-            /* Resize carousel + reposition arrows for the current image */
             applyHeight(carouselIndex);
         }
 
@@ -672,7 +788,6 @@
         prevBtn.addEventListener('click', () => goTo(carouselIndex - 1));
         nextBtn.addEventListener('click', () => goTo(carouselIndex + 1));
 
-        /* Touch / swipe support */
         let touchStartX = 0;
         track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
         track.addEventListener('touchend',   e => {
@@ -686,15 +801,12 @@
             modalDesc.textContent  = props.description.getValue();
             modalBadge.textContent = props.badge.getValue();
 
-            /* Open the modal FIRST so the carousel has a real offsetWidth,
-               even when images are already cached by the browser. */
             modalBg.classList.add('open');
             document.body.style.overflow = 'hidden';
 
             const photos = JSON.parse(props.photos.getValue());
             buildCarousel(photos);
 
-            /* Scroll modal to top after first image loads (or immediately if cached) */
             const modal    = document.getElementById('adventure-modal');
             const firstImg = track.querySelector('img');
             const scrollTop = () => { modal.scrollTop = 0; };
