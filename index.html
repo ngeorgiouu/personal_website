@@ -1,194 +1,672 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nicholas Georgiou</title>
-    <link rel="stylesheet" href="./StyleSheet.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        header {
-            background: url('Images/Panorama_3.JPEG') no-repeat center center/cover;
-            color: white;
-            text-align: center;
-            padding: 50px 20px;
+        :root {
+            --cream: #f5f0e8;
+            --ink: #1a1a1a;
+            --rust: #c94a2a;
+            --gold: #D4A853;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--ink);
+            font-family: 'DM Mono', monospace;
+            cursor: none;
+        }
+
+        /* ── CUSTOM CURSOR ── */
+        .cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: var(--ink);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease, width 0.2s ease, height 0.2s ease;
+            mix-blend-mode: multiply;
+        }
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--ink);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.18s ease, width 0.25s ease, height 0.25s ease, border-color 0.2s;
+        }
+
+        /* ══════════════════════════════════
+           LOADER
+        ══════════════════════════════════ */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--gold);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        #loaderCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .loader-top-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 56px;
+            border-bottom: 1.5px solid var(--ink);
+            display: flex;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 10;
+        }
+
+        .loader-monogram {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            letter-spacing: 0.18em;
+            color: var(--ink);
+            line-height: 1;
+        }
+
+        .loader-status-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .loader-status {
+            font-size: 9px;
+            letter-spacing: 0.28em;
+            color: var(--ink);
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+
+        .loader-pct {
+            font-size: 9px;
+            letter-spacing: 0.22em;
+            color: var(--ink);
+            opacity: 0.8;
+            min-width: 34px;
+            text-align: right;
+        }
+
+        .loader-bar-track {
+            position: absolute;
+            top: 56px;
+            left: 0;
+            width: 100%;
+            height: 1.5px;
+            background: rgba(26,26,26,0.12);
+            z-index: 10;
+        }
+        .loader-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--ink);
+            transition: width 0.12s linear;
+        }
+
+        .loader-big-text {
+            position: absolute;
+            top: 50%;
+            left: 0; right: 0;
+            transform: translateY(-50%);
+            padding: 14px 32px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            z-index: 10;
+        }
+
+        .loader-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(48px, 8vw, 96px);
+            letter-spacing: 0.06em;
+            color: var(--ink);
+            line-height: 0.88;
+            text-align: center;
+        }
+
+        .loader-subtitle {
+            font-family: 'DM Mono', monospace;
+            font-size: clamp(15px, 1.4vw, 16px);
+            letter-spacing: 0.35em;
+            color: var(--ink);
+            opacity: 1;
+            text-align: center;
+            margin-top: 18px;
+            font-weight: 1000;
+            text-transform: uppercase;
+        }
+
+        .scramble-char          { display: inline-block; }
+        .scramble-char.ghost    { opacity: 0.18; }
+        .scramble-char.glitching { opacity: 0.55; }
+        .scramble-char.settled  { opacity: 1; }
+
+        /* ── CURTAIN ── */
+        .curtain {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            pointer-events: none;
+        }
+        .curtain-top, .curtain-bottom {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: var(--gold);
+        }
+        .curtain-top    { top: 0;    transform-origin: top; }
+        .curtain-bottom { bottom: 0; transform-origin: bottom; }
+
+        /* ── MAIN PAGE ── */
+        #main {
+            position: fixed;
+            inset: 0;
+            opacity: 0;
+        }
+
+        .hero-photo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 100% 100%;
+            filter: brightness(0.72) contrast(1.08) saturate(0.9);
+            transform: scale(1.06);
+        }
+
+        .grain {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            opacity: 0.45;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 38%, rgba(15,12,10,0.72) 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .bottom-fog {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 260px;
+            background: linear-gradient(to top, rgba(10,8,6,0.85) 0%, transparent 100%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* ── TOP BAR ── */
+        .top-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            padding: 28px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .monogram {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            color: var(--cream);
+            letter-spacing: 0.12em;
+            line-height: 1;
+        }
+        .monogram em { color: var(--rust); font-style: normal; }
+
+        .top-meta {
+            text-align: right;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            color: rgba(245,240,232,0.45);
+            text-transform: uppercase;
+            line-height: 1.9;
+        }
+        .top-meta a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+        .top-meta a:hover { color: var(--cream); }
+
+        /* ── HERO TEXT ── */
+        .hero-text {
+            position: absolute;
+            left: 75px;
+            bottom: 190px;
+            z-index: 10;
+        }
+
+        .hero-eyebrow {
+            font-size: 15px;
+            letter-spacing: 0.45em;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(56px, 9vw, 130px);
+            color: var(--cream);
+            line-height: 0.92;
+            letter-spacing: 0.04em;
+        }
+
+        .hero-title .italic-line {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.48em;
+            color: var(--gold);
+            display: block;
+            letter-spacing: 0.02em;
+            margin-top: 6px;
+        }
+
+        /* ── NAV ── */
+        nav.main-nav {
+            position: absolute;
+            bottom: 48px;
+            left: 0; right: 0;
+            z-index: 10;
             display: flex;
             justify-content: center;
-            min-height: 125px;
+            align-items: center;
+            padding: 0 40px;
         }
 
-            header h1 {
-                font-size: 3rem;
-                margin: 0;
-            }
-
-            header h2 {
-                font-size: 1.5rem;
-                font-weight: 300;
-                margin-top: 10px;
-            }
-
-        section {
-            padding: 40px 20px;
-            max-width: 800px;
-            margin: 0 auto;
+        nav.main-nav a {
+            position: relative;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(13px, 1.8vw, 18px);
+            letter-spacing: 0.28em;
+            color: rgba(245,240,232,0.65);
+            text-decoration: none;
+            padding: 14px 28px;
+            transition: color 0.25s ease;
+            text-transform: uppercase;
         }
 
-            section h2 {
-                text-align: center;
-                margin-bottom: 20px;
-            }
+        nav.main-nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 1px;
+            background: var(--rust);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #333;
-            color: white;
+        nav.main-nav a:hover { color: var(--cream); }
+        nav.main-nav a:hover::before { width: calc(100% - 56px); }
+
+        nav.main-nav a + a::after {
+            content: '·';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(245,240,232,0.2);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        /* ── SCROLL INDICATOR ── */
+        .scroll-hint {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(245,240,232,0.3);
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--rust));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50%       { opacity: 0.8; }
+        }
+
+        .reveal-main { animation: revealMain 0.8s ease forwards; }
+        @keyframes revealMain {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        .curtain-open-top    { animation: openTop    1s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
+        .curtain-open-bottom { animation: openBottom 1s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
+        @keyframes openTop    { from { transform: scaleY(1); } to { transform: scaleY(0); } }
+        @keyframes openBottom { from { transform: scaleY(1); } to { transform: scaleY(0); } }
+
+        .photo-settle { animation: settle 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
+        @keyframes settle { to { transform: scale(1); } }
+
+        .stagger-in {
+            opacity: 0;
+            transform: translateY(18px);
+            animation: staggerReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes staggerReveal { to { opacity: 1; transform: translateY(0); } }
+
+        /* ── MOBILE ── */
+        @media (max-width: 600px) {
+            .top-bar { padding: 20px; }
+            .hero-text { left: 20px; bottom: 180px; }
+            nav.main-nav { padding: 0 12px; flex-wrap: wrap; justify-content: center; }
+            nav.main-nav a { padding: 10px 14px; font-size: 13px; }
+            .scroll-hint { display: none; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Nicholas Georgiou</h1>
-    </header>
-    <nav>
-        <a href="index.html">Home</a>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ═══ LOADER ═══ -->
+<div id="loader">
+    <canvas id="loaderCanvas"></canvas>
+
+    <div class="loader-top-bar">
+        <div class="loader-monogram">NICKY-G.</div>
+        <div class="loader-status-group">
+            <div class="loader-status" id="loaderStatus">Initializing</div>
+            <div class="loader-pct" id="loaderPct">0%</div>
+        </div>
+    </div>
+
+    <div class="loader-bar-track">
+        <div class="loader-bar-fill" id="loaderBarFill"></div>
+    </div>
+
+    <div class="loader-big-text">
+        <div class="loader-name" id="scrambleName"></div>
+        <div class="loader-subtitle" id="scrambleSubtitle"></div>
+    </div>
+</div>
+
+<!-- Curtain -->
+<div class="curtain">
+    <div class="curtain-top" id="curtainTop"></div>
+    <div class="curtain-bottom" id="curtainBottom"></div>
+</div>
+
+<!-- Main page -->
+<div id="main">
+    <img class="hero-photo" id="heroPhoto" src="Images/Baby_Nick_3.png" alt="Nicholas Georgiou">
+    <div class="grain"></div>
+    <div class="vignette"></div>
+    <div class="bottom-fog"></div>
+
+    <div class="top-bar">
+        <div class="monogram">Nicky-G<em>.</em></div>
+        <div class="top-meta">
+            <a href="mailto:nicholasageorgiou03@gmail.com">nicholasageorgiou03@gmail.com</a><br>
+            <a href="https://linkedin.com/in/ngeorgiou03" target="_blank">linkedin/ngeorgiou03</a>
+        </div>
+    </div>
+
+    <div class="hero-text" id="heroText">
+        <div class="hero-eyebrow">Est. 2003</div>
+        <div class="hero-title">
+            Nicholas<br>Georgiou
+            <span class="italic-line">driven by a curiosity</span>
+            <span class="italic-line">that never left.</span>
+        </div>
+    </div>
+
+    <nav class="main-nav" id="mainNav">
+        <a href="about.html">About</a>
         <a href="research.html">Research</a>
         <a href="projects.html">Projects</a>
         <a href="adventures.html">Adventures</a>
-        <a href="contact.html">Contact</a>
     </nav>
-    <section id="home">
-        <h2>Welcome</h2>
-        <div class="welcome-container">
-            <img src="Images/NASA_Summer.JPG" alt="Nicholas Georgiou"  width="200">
-            <div class="text-container">
-                <p>
-                    Welcome to the landing page of Nicholas Georgiou! I am originally from good ol' Olathe, Kansas where I was born and raised. I graduated from The University of Kansas
-                    in '25 with a B.S. in Engineering Physics.
-                </p>
-                <p>
-                    Apart from academics, I have a variety of hobbies. Whether it’s teeing off on the golf course, carving down snowy slopes, catching waves, or trekking through the mountains, I love sharing these experiences with friends and family while embracing the outdoors.
-                    For some highlights, check out my <a href="adventures.html">Adventures</a> page.
-                </p>
-            </div>
-        </div>
 
-        <h2>Undergraduate Journey</h2>
-            <style>
-            .tl-wrap { padding: 1rem 0 2rem; max-width: 640px; margin: 0 auto; }
-            .tl-rail { border-left: 3px solid #378ADD; margin-left: 12px; }
-            .tl-item { position: relative; padding: 0 0 12px 1.75rem; cursor: pointer; }
-            .tl-item:last-child { padding-bottom: 0; }
-            .tl-dot { position: absolute; left: -8px; top: 5px; width: 13px; height: 13px; border-radius: 50%; background: #378ADD; border: 2.5px solid #fff; box-shadow: 0 0 0 2px #378ADD; transition: box-shadow 0.2s; }
-            .tl-item:hover .tl-dot, .tl-item.open .tl-dot { box-shadow: 0 0 0 3px #378ADD, 0 0 0 5px rgba(55,138,221,0.2); }
-            .tl-card-top { width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; transition: border-color 0.2s; display: flex; align-items: center; gap: 12px; box-sizing: border-box; }
-            .tl-item:hover .tl-card-top, .tl-item.open .tl-card-top { border-color: #aaa; }
-            .tl-item.open .tl-card-top { border-radius: 8px 8px 0 0; }
-            .tl-header-text { flex: 1; }
-            .tl-year { font-size: 11px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 2px; }
-            .tl-title { font-size: 15px; font-weight: bold; margin: 0 0 1px; }
-            .tl-org { font-size: 13px; color: #555; margin: 0; }
-            .tl-toggle { font-size: 12px; color: #378ADD; flex-shrink: 0; }
-            .tl-body { display: none; font-size: 14px; line-height: 1.7; padding: 12px 16px; background: #f8f9fa; border: 1px solid #aaa; border-top: none; border-radius: 0 0 8px 8px; margin-bottom: 12px; box-sizing: border-box; }
-            .tl-body.open { display: block; }
-            .tl-body p { margin: 0 0 8px; }
-            .tl-body p:last-of-type { margin-bottom: 0; }
-            .tl-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #E6F1FB; color: #0C447C; border: 1px solid #B5D4F4; margin: 4px 4px 0 0; }
-            </style>
+    <div class="scroll-hint">
+        <div class="scroll-line"></div>
+        Scroll
+    </div>
+</div>
 
-            <div class="tl-wrap">
-            <div class="tl-rail">
+<script>
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
 
-                <div class="tl-item" onclick="tlToggle(this)">
-                <div class="tl-dot"></div>
-                <div class="tl-card-top">
-                    <div class="tl-header-text">
-                    <p class="tl-year">Sophomore year · Summer of 2023</p>
-                    <p class="tl-title">Undergraduate Researcher</p>
-                    <p class="tl-org">Cooperative Unmanned Systems Lab (CUSL) · University of Kansas</p>
-                    </div>
-                    <span class="tl-toggle">+ more</span>
-                </div>
-                <div class="tl-body">
-                    <p>My research journey began at Dr. Chao's <a href="https://cusl.ku.edu/Main_Page">Cooperative Unmanned Systems Laboratory (CUSL)</a>, 
-                    where I focused on developing high-frequency RPM data logging systems and dynamic thrust models for Unmanned Aerial Systems (UAS). The objective was to better capture thrust data during controlled fire burns, specifically when the UAS interferes with fire plume clouds.
-                    This exposed me to flight computer firmware, where I modified and implemented custom code for my proposed system. Shoutout Mosarruf and Zhenghao for being my first ever mentors!</p>
-                    <div><span class="tl-tag">UAS / Drones</span><span class="tl-tag">Thrust Modeling</span><span class="tl-tag">Firmware</span><span class="tl-tag">RPM Logging</span></div>
-                </div>
-                </div>
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
-                <div class="tl-item" onclick="tlToggle(this)">
-                <div class="tl-dot"></div>
-                <div class="tl-card-top">
-                    <div class="tl-header-text">
-                    <p class="tl-year">Junior year · Spring & Summer 2024</p>
-                    <p class="tl-title">Composites Engineering Intern</p>
-                    <p class="tl-org">NASA Langley Research Center · Advanced Materials & Processing Branch</p>
-                    </div>
-                    <span class="tl-toggle">+ more</span>
-                </div>
-                <div class="tl-body">
-                    <p>I joined <a href="https://www.nasa.gov/langley/">NASA Langley Research Center</a>, where I fabricated composite wingboxes, implemented adhesive-free bonding techniques, and conducted ultrasonic testing for non-destructive evaluation. My work extended to designing and machining composite molds and synchronizing in-situ ultrasonic scan data with autoclave cure cycles.</p>
-                    <div><span class="tl-tag">Composites</span><span class="tl-tag">Ultrasonic NDT</span><span class="tl-tag">Autoclave</span><span class="tl-tag">Mold Design</span></div>
-                </div>
-                </div>
+(function animCursor() {
+    rx += (mx - rx) * 0.14;
+    ry += (my - ry) * 0.14;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+    ring.style.left   = rx + 'px';
+    ring.style.top    = ry + 'px';
+    requestAnimationFrame(animCursor);
+})();
 
-                <div class="tl-item" onclick="tlToggle(this)">
-                <div class="tl-dot"></div>
-                <div class="tl-card-top">
-                    <div class="tl-header-text">
-                    <p class="tl-year">Senior year · Summer 2025</p>
-                    <p class="tl-title">Return of the Composites Engineer</p>
-                    <p class="tl-org">NASA Langley Research Center · Advanced Materials & Processing Branch</p>
-                    </div>
-                    <span class="tl-toggle">+ more</span>
-                </div>
-                <div class="tl-body">
-                    <p>I returned to NASA Langley to work on calibrating a thermal IR camera to improve temperature measurement accuracy for laser-assisted Automated Fiber Placement (AFP). I learned how material properties and surface finishes impact emissivity, and updated the camera software to account for those changes. Shoutout Finn, Joseph, Tyler, Wilfredo, and Henry for everything!</p>
-                    <div><span class="tl-tag">Thermal IR</span><span class="tl-tag">Laser AFP</span><span class="tl-tag">Emissivity Calibration</span><span class="tl-tag">Camera Software</span></div>
-                </div>
-                </div>
+document.querySelectorAll('a').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        cursor.style.width  = '20px';
+        cursor.style.height = '20px';
+        ring.style.width    = '60px';
+        ring.style.height   = '60px';
+        ring.style.borderColor = '#1a1a1a';
+    });
+    el.addEventListener('mouseleave', () => {
+        cursor.style.width  = '12px';
+        cursor.style.height = '12px';
+        ring.style.width    = '40px';
+        ring.style.height   = '40px';
+        ring.style.borderColor = '';
+    });
+});
 
-                <div class="tl-item" onclick="tlToggle(this)">
-                <div class="tl-dot"></div>
-                <div class="tl-card-top">
-                    <div class="tl-header-text">
-                    <p class="tl-year">Final semester · Fall 2025</p>
-                    <p class="tl-title">PCB Design Intern </p>
-                    <p class="tl-org">Malmoset · Lenexa, Kansas</p>
-                    </div>
-                    <span class="tl-toggle">+ more</span>
-                </div>
-                <div class="tl-body">
-                    <p>My pops found me a small shop called Malmoset where I learned KiCad and helped lay out 4-layered boards for custom camera designs. This sparked my interest in hardware design and led me to building my own custom flight controller — check out my <a href="projects.html">Projects</a> page for details. Shoutout Reid Crowe for being an amazing mentor!</p>
-                    <div><span class="tl-tag">KiCad</span><span class="tl-tag">4-Layer PCB</span><span class="tl-tag">Hardware Design</span><span class="tl-tag">Camera Systems</span></div>
-                </div>
-                </div>
+/* ── WAVE CANVAS ── */
+const canvas = document.getElementById('loaderCanvas');
+const ctx    = canvas.getContext('2d');
+let W, H, waveTime = 0;
 
-            </div>
-            </div>
+function resizeCanvas() {
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width  = W * window.devicePixelRatio;
+    canvas.height = H * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-            <script>
-            function tlToggle(item) {
-                const body = item.querySelector('.tl-body');
-                const btn = item.querySelector('.tl-toggle');
-                const isOpen = item.classList.contains('open');
-                item.classList.toggle('open', !isOpen);
-                body.classList.toggle('open', !isOpen);
-                btn.textContent = isOpen ? '+ more' : '− less';
-            }
-            </script>
-    </section>
+function drawWaves() {
+    ctx.clearRect(0, 0, W, H);
 
+    const centerY   = H * 0.46;
+    const lineCount = 70;
+    const maxAmp    = H * 0.5;
 
-    <footer>
-        <p>&copy; 2026 Nicholas Georgiou. All rights reserved.</p>
-    </footer>
+    for (let l = 0; l < lineCount; l++) {
+        const t        = l / lineCount;
+        const yOffset  = (t - 0.5) * maxAmp * 2.4;
+        const localAmp = maxAmp * Math.sin(t * Math.PI) * 0.85;
+        const alpha    = 0.105 + Math.sin(t * Math.PI) * 0.50;
+
+        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
+        ctx.lineWidth   = .7;
+        ctx.beginPath();
+
+        for (let x = 0; x <= W; x += 2) {
+            const p    = x / W;
+            const wave = Math.sin(p * Math.PI * 7  - waveTime * 1.8 + t * Math.PI * 0.6) * Math.sin(p * Math.PI) * localAmp
+                       + Math.sin(p * Math.PI * 17 - waveTime * 3.1 + l * 0.13) * localAmp * 0.35
+                       + Math.sin(p * Math.PI * 3  - waveTime * 0.9 + l * 0.22) * localAmp * 0.25;
+            const y = centerY + yOffset + wave;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+}
+
+/* ── SCRAMBLE ── */
+const GLYPHS   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@!%&';
+const NAME     = 'NICHOLAS GEORGIOU';
+const SUBTITLE = 'ENGINEER · RESEARCHER · ADVENTURER';
+
+const nameEl     = document.getElementById('scrambleName');
+const subtitleEl = document.getElementById('scrambleSubtitle');
+
+function renderScramble(el, target, progress) {
+    el.innerHTML = target.split('').map((ch, i) => {
+        if (ch === ' ') return `<span class="scramble-char settled">&nbsp;</span>`;
+        const charProg = Math.max(0, Math.min(1, progress * target.length - i));
+        if (charProg >= 1) {
+            return `<span class="scramble-char settled">${ch}</span>`;
+        } else if (charProg > 0) {
+            return `<span class="scramble-char glitching">${GLYPHS[Math.floor(Math.random() * GLYPHS.length)]}</span>`;
+        } else {
+            return `<span class="scramble-char ghost">${GLYPHS[Math.floor(Math.random() * GLYPHS.length)]}</span>`;
+        }
+    }).join('');
+}
+
+/* ── LOADER LOOP ── */
+const pctEl    = document.getElementById('loaderPct');
+const statusEl = document.getElementById('loaderStatus');
+const barFill  = document.getElementById('loaderBarFill');
+
+const LOAD_DUR = 3000;
+const startMs  = performance.now();
+let loaderDone = false;
+
+const STATUSES = [
+    [0,    'Initializing'],
+    [0.3,  'Loading assets'],
+    [0.65, 'Almost there'],
+    [0.92, 'Ready'],
+];
+
+function loaderFrame(now) {
+    const elapsed = now - startMs;
+    const raw     = Math.min(elapsed / LOAD_DUR, 1);
+    const p       = raw < 1 ? raw * raw * (3 - 2 * raw) : 1;
+
+    waveTime += 0.016;
+    drawWaves();
+
+    const displayPct = Math.round(p * 100);
+    pctEl.textContent   = displayPct + '%';
+    barFill.style.width = displayPct + '%';
+
+    let label = STATUSES[0][1];
+    for (const [thresh, text] of STATUSES) {
+        if (p >= thresh) label = text;
+    }
+    statusEl.textContent = label;
+
+    const textProg = Math.max(0, (p - 0.18) / 0.82);
+    renderScramble(nameEl, NAME, textProg);
+    renderScramble(subtitleEl, SUBTITLE, textProg * 0.85);
+
+    if (raw < 1) {
+        requestAnimationFrame(loaderFrame);
+    } else {
+        finishLoader();
+    }
+}
+
+requestAnimationFrame(loaderFrame);
+
+function finishLoader() {
+    if (loaderDone) return;
+    loaderDone = true;
+
+    pctEl.textContent      = '100%';
+    barFill.style.width    = '100%';
+    statusEl.textContent   = 'Ready';
+    nameEl.textContent     = NAME;
+    subtitleEl.textContent = SUBTITLE;
+
+    setTimeout(() => {
+        const loader = document.getElementById('loader');
+        loader.style.transition = 'opacity 0.45s ease';
+        loader.style.opacity    = '0';
+    }, 260);
+
+    setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('curtainTop').classList.add('curtain-open-top');
+        document.getElementById('curtainBottom').classList.add('curtain-open-bottom');
+    }, 720);
+
+    setTimeout(() => {
+        document.getElementById('main').classList.add('reveal-main');
+        document.getElementById('heroPhoto').classList.add('photo-settle');
+    }, 820);
+
+    [
+        document.querySelector('.top-bar'),
+        document.getElementById('heroText'),
+        document.querySelector('.scroll-hint'),
+        document.getElementById('mainNav'),
+    ].filter(Boolean).forEach((el, i) => {
+        setTimeout(() => {
+            el.classList.add('stagger-in');
+            el.style.animationDelay = (i * 0.08) + 's';
+        }, 1320 + i * 110);
+    });
+}
+</script>
 </body>
 </html>

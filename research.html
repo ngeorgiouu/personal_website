@@ -3,124 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Research | Nicholas Georgiou</title>
-    <link rel="stylesheet" href="./StyleSheet.css">
+    <title>Research — Nicholas Georgiou</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --cream: #f5f0e8;
+            --ink: #1a1a1a;
+            --rust: #c94a2a;
+            --gold: #D4A853;
+            --muted: rgba(245,240,232,0.45);
         }
 
-        header {
-            background: url('Images/Panorama_3.JPEG') no-repeat center center/cover;
-            color: white;
-            text-align: center;
-            padding: 50px 20px;
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--ink);
+            color: var(--cream);
+            font-family: 'DM Mono', monospace;
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+        /* ── CURSOR ── */
+        .cursor {
+            position: fixed;
+            width: 12px; height: 12px;
+            background: var(--rust);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s;
+            mix-blend-mode: difference;
+        }
+        .cursor-ring {
+            position: fixed;
+            width: 40px; height: 40px;
+            border: 1px solid var(--cream);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s, height 0.25s, border-color 0.2s;
+        }
+
+        /* ── TOP NAV ── */
+        .top-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 22px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(245,240,232,0.08);
+            background: rgba(26,26,26,0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .monogram {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: var(--cream);
+            letter-spacing: 0.12em;
+            text-decoration: none;
+        }
+        .monogram em { color: var(--rust); font-style: normal; }
+
+        nav.main-nav { display: flex; align-items: center; }
+
+        nav.main-nav a {
+            position: relative;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 15px;
+            letter-spacing: 0.28em;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 10px 22px;
+            transition: color 0.25s;
+            text-transform: uppercase;
+        }
+        nav.main-nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 4px; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 1px;
+            background: var(--rust);
+            transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        nav.main-nav a:hover, nav.main-nav a.active { color: var(--cream); }
+        nav.main-nav a:hover::before, nav.main-nav a.active::before { width: calc(100% - 44px); }
+        nav.main-nav a + a::after {
+            content: '·';
+            position: absolute; left: 0; top: 50%;
+            transform: translate(-50%,-50%);
+            color: rgba(245,240,232,0.15);
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        /* ── PAGE HERO ── */
+        .page-hero {
+            padding: 160px 40px 40px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 40px;
+            min-height: 600px;  
+
+            /* ADD THESE */
+            background-image: 
+                linear-gradient(to bottom, rgba(26,26,26,0.55), rgba(26,26,26,0.75)),
+                url('Images/Poster_Nasa.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+        }
+        
+
+        .hero-eyebrow {
+            font-size: 16px;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(64px, 10vw, 140px);
+            line-height: 0.88;
+            letter-spacing: 0.03em;
+            color: var(--cream);
+        }
+
+        .hero-title em {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.46em;
+            color: var(--gold);
+            display: block;
+            letter-spacing: 0.02em;
+            margin-top: 8px;
+        }
+
+        .hero-right {
+            text-align: right;
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            color: var(--muted);
+            line-height: 2.2;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .hero-right a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+        .hero-right a:hover { color: var(--cream); }
+
+        /* ── CONTENT ── */
+        .content {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 40px 120px;
+        }
+
+        /* ── SECTION LABEL ── */
+        .section-label {
+            font-size: 9px;
+            letter-spacing: 0.4em;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            min-height: 125px;
+            gap: 12px;
+        }
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(245,240,232,0.1);
         }
 
-            header h1 {
-                font-size: 3rem;
-                margin: 0;
-            }
+        /* ── RESEARCH BLOCK ── */
+        .research-block {
+            padding: 80px 0;
+            border-bottom: 1px solid rgba(245,240,232,0.08);
+        }
+        .research-block:last-of-type { border-bottom: none; }
 
-            header h2 {
-                font-size: 1.5rem;
-                font-weight: 300;
-                margin-top: 10px;
-            }
-
-        section {
-            padding: 40px 20px;
-            max-width: 800px;
-            margin: 0 auto;
+        .research-block h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(28px, 4vw, 44px);
+            letter-spacing: 0.06em;
+            color: var(--cream);
+            margin-bottom: 32px;
+            line-height: 1;
         }
 
-            section h2 {
-                text-align: center;
-                margin-bottom: 20px;
-            }
+        .research-block h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(20px, 3vw, 30px);
+            letter-spacing: 0.08em;
+            color: var(--gold);
+            margin: 48px 0 20px;
+            line-height: 1;
+        }
+        .research-block h3:first-of-type { margin-top: 0; }
 
-            section p {
-                margin-bottom: 15px;
-                line-height: 1.6;
-            }
+        .research-block p {
+            font-size: 13px;
+            line-height: 1.9;
+            color: rgba(245,240,232,0.65);
+            margin-bottom: 16px;
+        }
+        .research-block p:last-of-type { margin-bottom: 0; }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #333;
-            color: white;
+        .research-block a {
+            color: var(--gold);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(212,168,83,0.3);
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .research-block a:hover { color: var(--cream); border-color: var(--cream); }
+
+        /* Two-column layout for image + text */
+        .research-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: start;
+            margin-top: 24px;
         }
 
-        .flex-container {
-            display: flex;
-            flex-wrap: wrap; /* Allows wrapping on smaller screens */
-            gap: 20px; /* Adds space between the image and text */
-            align-items: center; /* Centers content vertically */
+        .research-grid.reverse { direction: rtl; }
+        .research-grid.reverse > * { direction: ltr; }
+
+        .research-img-wrap {
+            position: relative;
         }
-
-            .flex-container img {
-                max-width: 40%; /* Adjust the image width */
-                height: auto; /* Maintain aspect ratio */
-            }
-
-            .flex-container .text {
-                flex: 1; /* Ensures the text takes the remaining space */
-                font-size: 1.1em;
-                text-align: justify;
-            }
-
-        .full-width-container {
-            width: 100vw;
-            margin-left: calc(-50vw + 50%);
-            margin-right: calc(-50vw + 50%);
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .full-width-image {
+        .research-img-wrap img {
             width: 100%;
             height: auto;
             display: block;
+            filter: brightness(0.85) contrast(1.05) saturate(0.9);
+        }
+        /* Corner brackets */
+        .research-img-wrap::before,
+        .research-img-wrap::after {
+            content: '';
+            position: absolute;
+            width: 16px; height: 16px;
+            z-index: 2;
+        }
+        .research-img-wrap::before {
+            top: -6px; left: -6px;
+            border-top: 1.5px solid var(--gold);
+            border-left: 1.5px solid var(--gold);
+        }
+        .research-img-wrap::after {
+            bottom: -6px; right: -6px;
+            border-bottom: 1.5px solid var(--rust);
+            border-right: 1.5px solid var(--rust);
+        }
+
+        /* Full-width image */
+        .full-img-wrap {
+            position: relative;
+            margin: 32px 0;
+        }
+        .full-img-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: brightness(0.88) contrast(1.04) saturate(0.9);
+        }
+        .full-img-wrap::before,
+        .full-img-wrap::after {
+            content: '';
+            position: absolute;
+            width: 16px; height: 16px;
+            z-index: 2;
+        }
+        .full-img-wrap::before {
+            top: -6px; left: -6px;
+            border-top: 1.5px solid var(--gold);
+            border-left: 1.5px solid var(--gold);
+        }
+        .full-img-wrap::after {
+            bottom: -6px; right: -6px;
+            border-bottom: 1.5px solid var(--rust);
+            border-right: 1.5px solid var(--rust);
+        }
+
+        /* ── PUBLICATIONS ── */
+        .pub-block {
+            padding: 80px 0 0;
+        }
+
+        .pub-item {
+            border: 1px solid rgba(245,240,232,0.1);
+            padding: 24px 28px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .pub-item:hover {
+            border-color: rgba(212,168,83,0.35);
+            background: rgba(212,168,83,0.04);
+        }
+
+        .pub-index {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: rgba(212,168,83,0.25);
+            letter-spacing: 0.06em;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 40px;
+        }
+
+        .pub-title {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--cream);
+            margin-bottom: 10px;
+        }
+
+        .pub-title a {
+            color: var(--cream);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(245,240,232,0.2);
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .pub-title a:hover { color: var(--gold); border-color: var(--gold); }
+
+        .pub-meta {
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        /* ── GRAIN + FADE ── */
+        .grain {
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid rgba(245,240,232,0.08);
+            padding: 32px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: rgba(245,240,232,0.25);
+            text-transform: uppercase;
+        }
+
+        /* ── MOBILE ── */
+        @media (max-width: 700px) {
+            .top-bar { padding: 18px 20px; }
+            .page-hero { padding: 130px 20px 60px; flex-direction: column; align-items: flex-start; gap: 24px; }
+            .hero-right { text-align: left; }
+            .content { padding: 0 20px 80px; }
+            .research-grid { grid-template-columns: 1fr; gap: 28px; }
+            .research-grid.reverse { direction: ltr; }
+            footer { flex-direction: column; gap: 8px; text-align: center; }
+            nav.main-nav a { padding: 8px 12px; font-size: 12px; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Research</h1>
-    </header>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="research.html">Research</a>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grain"></div>
+
+<!-- ── TOP NAV ── -->
+<div class="top-bar">
+    <a class="monogram" href="index.html">Nicky-G<em>.</em></a>
+    <nav class="main-nav">
+        <a href="about.html">About</a>
+        <a href="research.html" class="active">Research</a>
         <a href="projects.html">Projects</a>
         <a href="adventures.html">Adventures</a>
-        <a href="contact.html">Contact</a>
     </nav>
-    <section id="research">
-        <h2>Research Overview</h2>
+</div>
 
-        <h3>Cooperative Unmanned Aerial Systems (CUSL)</h3>
-        <div class="welcome-container">
-            <div class="text-container">
-                <p>
-                    My work at CUSL focuses on developing high-frequency revolution per minute (RPM) data logging systems and creating dynamic thrust models for Unmanned Aerial Systems (UAS).
-                    I have familiarized myself with open-source autopilot code using GitHub and Linux to navigate, edit, and compile new enhanced firmware to log RPM data at higher rates (50 Hz) than ever before.
-                    As an Undergraduate Research Fellow, I designed a motor test stand to log real-time RPM data safely. Using a sensor to detect voltage changes in AC motor wires, I synchronized electronic speed controller data with flight controller outputs, validating new RPM systems for thrust modeling.
-                </p>
-            </div>
+<!-- ── PAGE HERO ── -->
+<div class="page-hero fade-in">
+    <div class="hero-left">
+        <div class="hero-title">
+            Research
         </div>
+        <div class="hero-eyebrow">Composite Materials · Non-Destructive Evaluation · Drone Systems</div>
+    </div>
+    <div class="hero-right">
+        <a href="mailto:nicholasageorgiou03@gmail.com">nicholasageorgiou03@gmail.com</a><br>
+        <a href="https://linkedin.com/in/ngeorgiou03" target="_blank">linkedin/ngeorgiou03</a>
+    </div>
+</div>
 
-        <img src="Images/Poster.svg" alt="Description" class="centered-image" width="700">
+<!-- ── CONTENT ── -->
+<div class="content">
 
-        <h3>Composites Engineering at NASA Langley</h3>
-        <div class="welcome-container">
-            <img src="Images/NASA_wingboxes.jpg" alt="Nicholas Georgiou" width="350">
-            <div class="text-container">
+    <!-- CUSL -->
+    <div class="research-block fade-in" style="animation-delay:0.1s;">
+        <div class="section-label">Undergraduate Research</div>
+        <h2>Cooperative Unmanned Systems Lab</h2>
+
+        <p>
+            My work at CUSL focuses on developing high-frequency revolution per minute (RPM) data logging systems and creating dynamic thrust models for Unmanned Aerial Systems (UAS).
+            I familiarized myself with open-source autopilot code using GitHub and Linux to navigate, edit, and compile enhanced firmware to log RPM data at higher rates (50 Hz) than ever before.
+        </p>
+        <p>
+            As an Undergraduate Research Fellow, I designed a motor test stand to log real-time RPM data safely. Using a sensor to detect voltage changes in AC motor wires, I synchronized electronic speed controller data with flight controller outputs, validating new RPM systems for thrust modeling.
+        </p>
+
+        <div class="full-img-wrap">
+            <img src="Images/Poster.svg" alt="CUSL Research Poster">
+        </div>
+    </div>
+
+    <!-- NASA Composites -->
+    <div class="research-block fade-in" style="animation-delay:0.2s;">
+        <div class="section-label">NASA Langley Research Center</div>
+        <h2>Composites Engineering</h2>
+
+        <div class="research-grid">
+            <div class="research-img-wrap">
+                <img src="Images/NASA_wingboxes.jpg" alt="Nicholas Georgiou with composite wingboxes">
+            </div>
+            <div>
                 <p>
                     During my internship at NASA Langley Research Center, I fabricated composite wingboxes using advanced manufacturing techniques. My contributions included implementing a novel bonding technique for skin-to-spar interfaces, conducting ultrasonic testing for non-destructive evaluation, and designing composite molds to support research initiatives.
                 </p>
@@ -128,37 +464,89 @@
                     I prototyped a composite tubular spar mold for a wing test article, addressing challenges like coefficient of thermal expansion (CTE). This project involved CAD modeling, detailed engineering drawings, and multiple iterations of rapid prototyping to achieve precise specifications.
                 </p>
                 <p>
-                    Overall, I was grateful for the opportunity to gain hands-on experience with composites and develop analytical skills in ultrasonic testing.
-                    The image to the left shows me standing in front of the autoclave with the two wingboxes I manufactured.
-                    The two large slits were made for mechanical testing, specifically Double Cantilever Beam (DCB) testing, which I was lucky enough to experiment with.
+                    The photo shows me standing in front of the autoclave with the two wingboxes I manufactured. The two large slits were made for mechanical testing — specifically Double Cantilever Beam (DCB) testing, which I was lucky enough to experiment with.
                 </p>
             </div>
         </div>
-        <h4>In-Situ Analysis of Tow-Steered Composites</h4>
-        <div class="welcome-container">
-            <img src="Images/InSitu_Results_Viewer_Frame.png" alt="Nicholas Georgiou" width="350">
-            <div class="text-container">
-                <p>
-                    Also at NASA Langley, I had the opportunity to work on an in-situ ultrasonic analysis of a tow-steered composite panel.
-                    A tow-steered composite contains tow paths that are curved together in high-stress regions by using automated fiber placement (AFP).
-                    However due to AFP, many defects can occur during the layup. These defects were monitored during the panel's autoclave cure using a novel in-situ ultrasonic scanner.
-                    Part of my work involved correlating the in-situ c-scans to the cure cycle parameters (temperature, pressure, tg, etc.). A snapshot of this is to the left.
-                    For a more in depth explanation, check out the presentation <a href="https://ntrs.nasa.gov/api/citations/20240013255/downloads/ASC%202024_Tow%20Steered%20Defect%20Detection%20During%20Cure.pdf">here</a>, and the research paper <a href="https://ntrs.nasa.gov/api/citations/20240008661/downloads/004123_Hudson_STRIVES.pdf">here</a>.
-                </p>
-            </div>
-        </div>
-        <h2>Publications</h2>
-        <p>
-            <a href="https://ntrs.nasa.gov/api/citations/20240008661/downloads/004123_Hudson_STRIVES.pdf" target="_blank">
-                Detection and Localization of a Fold, Twist, and Overlaps
-                within Tow-Steered Composite Panels During Autoclave
-                Cure
-            </a>
-        </p>
-    </section>
 
-    <footer>
-        <p>&copy; 2026 Nicholas Georgiou. All rights reserved.</p>
-    </footer>
+        <!-- In-Situ sub-section -->
+        <h3>In-Situ Analysis of Tow-Steered Composites</h3>
+
+        <div class="research-grid reverse">
+            <div class="research-img-wrap">
+                <img src="Images/InSitu_Results_Viewer_Frame.png" alt="In-situ ultrasonic scan results">
+            </div>
+            <div>
+                <p>
+                    Also at NASA Langley, I worked on an in-situ ultrasonic analysis of a tow-steered composite panel. A tow-steered composite contains tow paths that are curved together in high-stress regions using automated fiber placement (AFP).
+                </p>
+                <p>
+                    Due to AFP, many defects can occur during layup. These defects were monitored during the panel's autoclave cure using a novel in-situ ultrasonic scanner. My work involved correlating the in-situ c-scans to cure cycle parameters — temperature, pressure, Tg, and more.
+                </p>
+                <p>
+                    For a deeper look, see the <a href="https://ntrs.nasa.gov/api/citations/20240013255/downloads/ASC%202024_Tow%20Steered%20Defect%20Detection%20During%20Cure.pdf" target="_blank">conference presentation</a> and the <a href="https://ntrs.nasa.gov/api/citations/20240008661/downloads/004123_Hudson_STRIVES.pdf" target="_blank">full research paper</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Publications -->
+    <div class="pub-block fade-in" style="animation-delay:0.3s;">
+        <div class="section-label">Publications</div>
+        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,44px);letter-spacing:0.06em;color:var(--cream);margin-bottom:32px;line-height:1;">Selected Works</h2>
+
+        <div class="pub-item">
+            <div class="pub-index">01</div>
+            <div class="pub-content">
+                <div class="pub-title">
+                    <a href="https://ntrs.nasa.gov/api/citations/20240008661/downloads/004123_Hudson_STRIVES.pdf" target="_blank">
+                        Detection and Localization of a Fold, Twist, and Overlaps within Tow-Steered Composite Panels During Autoclave Cure
+                    </a>
+                </div>
+                <div class="pub-meta">NASA Technical Reports Server · 2024</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+    <span>© 2026 Nicholas Georgiou</span>
+    <span>Olathe, Kansas</span>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+(function animCursor() {
+    rx += (mx - rx) * 0.14;
+    ry += (my - ry) * 0.14;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+    ring.style.left   = rx + 'px';
+    ring.style.top    = ry + 'px';
+    requestAnimationFrame(animCursor);
+})();
+
+document.querySelectorAll('a').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '60px'; ring.style.height = '60px';
+        ring.style.borderColor = 'var(--rust)';
+    });
+    el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px'; cursor.style.height = '12px';
+        ring.style.width = '40px'; ring.style.height = '40px';
+        ring.style.borderColor = '';
+    });
+});
+</script>
 </body>
 </html>
