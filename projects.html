@@ -206,7 +206,7 @@
 
         /* ── SECTION LABEL ── */
         .section-label {
-            font-size: 9px;
+            font-size: 14px;
             letter-spacing: 0.4em;
             color: var(--gold);
             text-transform: uppercase;
@@ -247,7 +247,7 @@
             font-size: clamp(20px, 3vw, 30px);
             letter-spacing: 0.08em;
             color: var(--gold);
-            margin: 48px 0 20px;
+            margin: 64px 0 20px;
             line-height: 1;
         }
 
@@ -265,7 +265,7 @@
         .project-block p:last-of-type {
             margin-bottom: 0;
         }
-
+ 
         .project-block a {
             color: var(--gold);
             text-decoration: none;
@@ -427,33 +427,66 @@
             text-transform: uppercase;
         }
 
-        /* Mobile Responsiveness */
         @media (max-width: 700px) {
             .top-bar { 
                 padding: 18px 20px; 
                 gap: 12px;
             }
-            .monogram { font-size: 18px; white-space: nowrap; flex-shrink: 0}
+            .monogram { font-size: 18px; white-space: nowrap; flex-shrink: 0; }
             nav.main-nav a { 
                 padding: 8px 8px; 
                 font-size: 11px; 
-                letter-spacing: 0.08em;   /* ← tighter letter spacing saves space */
+                letter-spacing: 0.08em;
             }
             .page-hero { 
                 padding: 130px 20px 60px; 
-                flex-direction: column-reverse;  /* ← changed from column */
+                flex-direction: column-reverse;
                 align-items: flex-start; 
                 gap: 24px; 
                 background-position: 72% 50%;
             }
             .hero-right { text-align: left; }
             .content { padding: 0 20px 80px; }
-            .welcome-section { grid-template-columns: 1fr; gap: 36px; }
-            .welcome-photo-wrap img { aspect-ratio: 4/3; }
             footer { flex-direction: column; gap: 8px; text-align: center; }
-            nav.main-nav a { padding: 8px 12px; font-size: 12px; }
             html, body { cursor: auto; }
             .cursor, .cursor-ring { display: none; }
+
+            /* ── PROJECT CONTENT FIXES ── */
+            .project-grid,
+            .project-grid.reverse {
+                grid-template-columns: 1fr;
+                direction: ltr;
+                gap: 28px;
+            }
+
+            .project-img-wrap img {
+                width: 100%;
+                object-position: center;
+            }
+
+            .project-block {
+                padding: 48px 0;
+            }
+
+            .project-block h2 {
+                margin-bottom: 20px;
+            }
+
+            .project-block h3 {
+                margin: 32px 0 16px;
+            }
+
+            .project-intro {
+                margin-bottom: 28px;
+            }
+
+            .coming-soon {
+                padding: 28px 20px;
+            }
+
+            .full-img-wrap img {
+                object-position: center;
+            }
         }
     </style>
 </head>
@@ -497,7 +530,7 @@
         </p>
 
         <div class="sub-section">
-            <h3>Flight Controller &amp; Software</h3>
+            <h3 style="margin-top: 24px;">Flight Controller &amp; Software</h3>
             <div class="full-img-wrap">
                 <img src="Images/Hardware_Diagram.jpg" alt="Hardware diagram">
             </div>
@@ -520,7 +553,7 @@
         </div>
 
         <div class="sub-section">
-            <h3>Payload Design</h3>
+            <h3 style="margin-top: 24px;">Payload Design</h3>
             <div class="project-grid reverse">
                 <div class="project-img-wrap">
                     <img src="Images/TVC Project/Struc.jpg" alt="Payload structure CAD">
@@ -537,7 +570,7 @@
         </div>
 
         <div class="sub-section">
-            <h3>TVC Mount</h3>
+            <h3 style="margin-top: 24px;">TVC Mount</h3>
             <div class="project-grid">
                 <div class="project-img-wrap">
                     <img src="Images/TVC Project/Final_Part.png" alt="TVC gimbal mount CAD">
@@ -557,7 +590,7 @@
         </div>
 
         <div class="sub-section">
-            <h3>Flight Simulation</h3>
+            <h3 style="margin-top: 24px;">Flight Simulation</h3>
             <div class="coming-soon">Simulation results coming soon</div>
         </div>
     </div>

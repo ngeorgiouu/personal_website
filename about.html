@@ -215,7 +215,7 @@
         }
 
         .section-label {
-            font-size: 9px;
+            font-size: 18px;
             letter-spacing: 0.4em;
             color: var(--gold);
             text-transform: uppercase;
@@ -421,32 +421,62 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile Responsiveness */
         @media (max-width: 700px) {
             .top-bar { 
                 padding: 18px 20px; 
                 gap: 12px;
             }
-            .monogram { font-size: 18px; white-space: nowrap; flex-shrink: 0}
+            .monogram { font-size: 18px; white-space: nowrap; flex-shrink: 0; }
             nav.main-nav a { 
                 padding: 8px 8px; 
                 font-size: 11px; 
-                letter-spacing: 0.08em;   /* ← tighter letter spacing saves space */
+                letter-spacing: 0.08em;
             }
             .page-hero { 
-                padding: 130px 20px 60px; 
-                flex-direction: column-reverse;  /* ← changed from column */
+                padding: 130px 20px 24px; 
+                flex-direction: column-reverse;
                 align-items: flex-start; 
-                gap: 24px; 
+                justify-content: flex-end;
+                gap: 8px; 
             }
             .hero-right { text-align: left; }
             .content { padding: 0 20px 80px; }
-            .welcome-section { grid-template-columns: 1fr; gap: 36px; }
-            .welcome-photo-wrap img { aspect-ratio: 4/3; }
             footer { flex-direction: column; gap: 8px; text-align: center; }
-            nav.main-nav a { padding: 8px 12px; font-size: 12px; }
             html, body { cursor: auto; }
             .cursor, .cursor-ring { display: none; }
+
+            /* ── WELCOME SECTION ── */
+            .welcome-section {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            .welcome-photo-wrap img {
+                width: 100%;
+                height: auto;   /* ← natural height, no crop */
+            }
+
+            /* ── TIMELINE ── */
+            .tl-card-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .tl-toggle {
+                align-self: flex-end;
+            }
+            .tl-title {
+                font-size: 17px;
+            }
+            .tl-body {
+                font-size: 12px;
+            }
+            .tl-tags {
+                gap: 4px;
+            }
+            .tl-tag {
+                font-size: 8px;
+                padding: 3px 8px;
+            }
         }
     </style>
 </head>
@@ -489,7 +519,7 @@
             <div class="section-label">Welcome</div>
             <h2>Nicholas<br>Georgiou</h2>
             <p>
-                Originally from good ol' Olathe, Kansas — born, raised, and perpetually sunburned. I graduated from The University of Kansas in '25 with a B.S. in Engineering Physics.
+                Originally from good ol' Olathe, Kansas, where I was born and raised. Grew up the youngest of three siblings and I got away with alot being able to fly under the radar. Played soccer my entire life and picked up tennis as my fun sport in highschool. Always had a kick for math but didn't know what I wanted to do. Following my math mind but putting it into practice, I eventually graduated from The University of Kansas in '25 with a B.S. in Engineering Physics.
             </p>
             <p>
                 Apart from academics, I have a variety of hobbies. Whether it's teeing off on the golf course, carving down snowy slopes, catching waves, or trekking through the mountains, I love sharing these experiences with friends and family while embracing the outdoors.
