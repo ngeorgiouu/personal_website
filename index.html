@@ -403,7 +403,9 @@
         /* ── MOBILE ── */
         @media (max-width: 600px) {
             .top-bar { padding: 20px; }
-            .hero-text { left: 20px; bottom: 180px; }
+            .hero-photo { object-position: 70% 100%;}
+            .cursor, .cursor-ring { display: none; }
+            .hero-text { left: 20px; bottom: 335px; }
             nav.main-nav { padding: 0 12px; flex-wrap: wrap; justify-content: center; }
             nav.main-nav a { padding: 10px 14px; font-size: 13px; }
             .scroll-hint { display: none; }
@@ -452,10 +454,6 @@
 
     <div class="top-bar">
         <div class="monogram">Nicky-G<em>.</em></div>
-        <div class="top-meta">
-            <a href="mailto:nicholasageorgiou03@gmail.com">nicholasageorgiou03@gmail.com</a><br>
-            <a href="https://linkedin.com/in/ngeorgiou03" target="_blank">linkedin/ngeorgiou03</a>
-        </div>
     </div>
 
     <div class="hero-text" id="heroText">
@@ -561,16 +559,20 @@ function drawWaves() {
 
 /* ── SCRAMBLE ── */
 const GLYPHS   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@!%&';
-const NAME     = 'NICHOLAS GEORGIOU';
+const isMobile = window.matchMedia("(max-width: 600px)").matches;
+const NAME     = isMobile
+    ? ['NICHOLAS', 'GEORGIOU']
+    : ['NICHOLAS GEORGIOU'];
 const SUBTITLE = 'ENGINEER · RESEARCHER · ADVENTURER';
 
 const nameEl     = document.getElementById('scrambleName');
 const subtitleEl = document.getElementById('scrambleSubtitle');
 
-function renderScramble(el, target, progress) {
-    el.innerHTML = target.split('').map((ch, i) => {
+// Renders a single line given a per-character progress (0–1 per char).
+function renderLine(line, progress) {
+    return '<div>' + line.split('').map((ch, i) => {
         if (ch === ' ') return `<span class="scramble-char settled">&nbsp;</span>`;
-        const charProg = Math.max(0, Math.min(1, progress * target.length - i));
+        const charProg = Math.max(0, Math.min(1, progress * line.length - i));
         if (charProg >= 1) {
             return `<span class="scramble-char settled">${ch}</span>`;
         } else if (charProg > 0) {
@@ -578,6 +580,17 @@ function renderScramble(el, target, progress) {
         } else {
             return `<span class="scramble-char ghost">${GLYPHS[Math.floor(Math.random() * GLYPHS.length)]}</span>`;
         }
+    }).join('') + '</div>';
+}
+
+// Renders all lines, giving each its own progress slice so they animate
+// sequentially — line 0 scrambles first, line 1 starts only after line 0 finishes.
+function renderScramble(el, lines, progress) {
+    const perLine = 1 / lines.length;
+    el.innerHTML = lines.map((line, idx) => {
+        // Each line occupies its own [idx/n … (idx+1)/n] slice of progress.
+        const lineProgress = Math.max(0, Math.min(1, (progress - idx * perLine) / perLine));
+        return renderLine(line, lineProgress);
     }).join('');
 }
 
@@ -617,7 +630,7 @@ function loaderFrame(now) {
 
     const textProg = Math.max(0, (p - 0.18) / 0.82);
     renderScramble(nameEl, NAME, textProg);
-    renderScramble(subtitleEl, SUBTITLE, textProg * 0.85);
+    renderScramble(subtitleEl, [SUBTITLE], textProg * 0.85);
 
     if (raw < 1) {
         requestAnimationFrame(loaderFrame);
@@ -635,7 +648,7 @@ function finishLoader() {
     pctEl.textContent      = '100%';
     barFill.style.width    = '100%';
     statusEl.textContent   = 'Ready';
-    nameEl.textContent     = NAME;
+    nameEl.innerHTML = NAME.map(line => `<div>${line}</div>`).join('');
     subtitleEl.textContent = SUBTITLE;
 
     setTimeout(() => {

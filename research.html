@@ -382,16 +382,33 @@
             text-transform: uppercase;
         }
 
-        /* ── MOBILE ── */
+        /* Mobile Responsiveness */
         @media (max-width: 700px) {
-            .top-bar { padding: 18px 20px; }
-            .page-hero { padding: 130px 20px 60px; flex-direction: column; align-items: flex-start; gap: 24px; }
+            .top-bar { 
+                padding: 18px 20px; 
+                gap: 12px;
+            }
+            .monogram { font-size: 18px; white-space: nowrap; flex-shrink: 0}
+            nav.main-nav a { 
+                padding: 8px 8px; 
+                font-size: 11px; 
+                letter-spacing: 0.08em;   /* ← tighter letter spacing saves space */
+            }
+            .page-hero { 
+                padding: 130px 20px 60px; 
+                flex-direction: column-reverse;  /* ← changed from column */
+                align-items: flex-start; 
+                gap: 24px; 
+                background-position: 70% 100%;
+            }
             .hero-right { text-align: left; }
             .content { padding: 0 20px 80px; }
-            .research-grid { grid-template-columns: 1fr; gap: 28px; }
-            .research-grid.reverse { direction: ltr; }
+            .welcome-section { grid-template-columns: 1fr; gap: 36px; }
+            .welcome-photo-wrap img { aspect-ratio: 4/3; }
             footer { flex-direction: column; gap: 8px; text-align: center; }
-            nav.main-nav a { padding: 8px 12px; font-size: 12px; }
+            nav.main-nav a { padding: 8x 12px; font-size: 12px; }
+            html, body { cursor: auto; }
+            .cursor, .cursor-ring { display: none; }
         }
     </style>
 </head>
@@ -419,10 +436,6 @@
             Research
         </div>
         <div class="hero-eyebrow">Composite Materials · Non-Destructive Evaluation · Drone Systems</div>
-    </div>
-    <div class="hero-right">
-        <a href="mailto:nicholasageorgiou03@gmail.com">nicholasageorgiou03@gmail.com</a><br>
-        <a href="https://linkedin.com/in/ngeorgiou03" target="_blank">linkedin/ngeorgiou03</a>
     </div>
 </div>
 
