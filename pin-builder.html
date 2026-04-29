@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Adventure Pin Builder</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #f5f0e8; --ink: #1a1a1a; --rust: #c94a2a;
+    --gold: #D4A853; --surface: #232323; --border: rgba(245,240,232,0.14);
+    --muted: rgba(245,240,232,0.55);
+  }
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'DM Mono', 'Courier New', monospace;
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+  h1 { font-family: Georgia, serif; font-style: italic; font-size: 26px; color: var(--gold); margin-bottom: 4px; }
+  .sub { font-size: 12px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.04em; }
+  .wrap { max-width: 700px; margin: 0 auto; }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--rust); margin-bottom: 14px; margin-top: 28px;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .field label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .field input, .field textarea, .field select {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--cream); font-family: inherit; font-size: 13px; padding: 10px 12px;
+    width: 100%; transition: border-color 0.2s; outline: none;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: rgba(212,168,83,0.5); }
+  .field select option { background: #222; }
+  .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .date-row { display: flex; align-items: flex-end; gap: 14px; margin-bottom: 18px; }
+  .date-row .field { margin-bottom: 0; flex: 0 0 220px; }
+  .date-hint { font-size: 11px; color: var(--muted); line-height: 1.6; padding-bottom: 2px; }
+
+  .photo-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 10px;
+  }
+  .photo-row .field { margin-bottom: 0; }
+  .browse-btn {
+    background: rgba(212,168,83,0.12); border: 1px solid rgba(212,168,83,0.4);
+    color: var(--gold); border-radius: 8px; font-size: 12px; cursor: pointer;
+    padding: 10px 14px; font-family: inherit; transition: background 0.2s;
+    white-space: nowrap; align-self: end;
+  }
+  .browse-btn:hover { background: rgba(212,168,83,0.25); }
+  .rm-btn {
+    background: none; border: 1px solid rgba(201,74,42,0.35); color: var(--rust);
+    border-radius: 8px; font-size: 12px; cursor: pointer; padding: 10px 12px;
+    font-family: inherit; transition: background 0.2s; white-space: nowrap; align-self: end;
+  }
+  .rm-btn:hover { background: rgba(201,74,42,0.1); }
+  .add-photo {
+    background: none; border: 1px dashed var(--border); color: var(--muted);
+    border-radius: 8px; font-size: 12px; cursor: pointer; padding: 9px 16px;
+    font-family: inherit; width: 100%; margin-bottom: 18px;
+    transition: border-color 0.2s, color 0.2s; letter-spacing: 0.05em;
+  }
+  .add-photo:hover { border-color: var(--gold); color: var(--gold); }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+  .btn-row { display: flex; gap: 12px; margin-top: 8px; }
+  .btn { padding: 11px 26px; border-radius: 8px; font-family: inherit; font-size: 13px; cursor: pointer; letter-spacing: 0.08em; transition: all 0.2s; }
+  .btn-primary { background: var(--rust); border: 1px solid var(--rust); color: #fff; }
+  .btn-primary:hover { background: #a83b20; }
+  .btn-secondary { background: none; border: 1px solid var(--border); color: var(--muted); }
+  .btn-secondary:hover { border-color: var(--cream); color: var(--cream); }
+
+  .status-area { margin-top: 22px; min-height: 20px; }
+  .status { font-size: 13px; line-height: 1.7; padding: 12px 16px; border-radius: 8px; display: none; }
+  .status.success { display: block; background: rgba(50,180,100,0.12); border: 1px solid rgba(50,180,100,0.3); color: #7ddfaa; }
+  .status.error   { display: block; background: rgba(201,74,42,0.12); border: 1px solid rgba(201,74,42,0.3); color: #f08070; }
+  .status.info    { display: block; background: rgba(212,168,83,0.08); border: 1px solid rgba(212,168,83,0.25); color: var(--gold); }
+
+  code { color: var(--gold); background: rgba(212,168,83,0.1); padding: 1px 5px; border-radius: 4px; font-family: inherit; }
+
+  @media (max-width: 550px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .photo-row { grid-template-columns: 1fr auto; }
+    .browse-btn { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Adventure Pin Builder</h1>
+  <p class="sub">Writes directly to <code>adventures.html</code> — Chrome / Edge only</p>
+
+  <div class="section-label">Pin Details</div>
+
+  <div class="grid2">
+    <div class="field">
+      <label>Title</label>
+      <input id="title" type="text" placeholder="The Enchantments: Lake Colchuck" />
+    </div>
+    <div class="field">
+      <label>Badge (location label)</label>
+      <input id="badge" type="text" placeholder="Leavenworth, WA" />
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label>Latitude</label>
+      <input id="lat" type="number" step="any" placeholder="46.853" />
+    </div>
+    <div class="field">
+      <label>Longitude</label>
+      <input id="lon" type="number" step="any" placeholder="-121.726" />
+    </div>
+  </div>
+
+  <div class="field" style="max-width:250px">
+    <label>Category</label>
+    <select id="cat">
+      <option value="">general </option>
+      <option value="golf">golf ⛳</option>
+      <option value="climbing">climbing 🧗</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Description</label>
+    <textarea id="desc" placeholder="Write what happened here..."></textarea>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-label">Photos</div>
+
+  <div class="date-row">
+    <div class="field">
+      <label>Date </label>
+      <input id="shared-date" type="text" placeholder="Jan 1, 2026" />
+    </div>
+    <p class="date-hint">Set once — applies to every photo.</p>
+  </div>
+
+  <div id="photos-container"></div>
+  <button class="add-photo" onclick="addPhoto()">+ add another photo</button>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="addPin()">Add Pin to adventures.html</button>
+    <button class="btn btn-secondary" onclick="resetForm()">Clear form</button>
+  </div>
+
+  <div class="status-area">
+    <div class="status" id="status-msg"></div>
+  </div>
+</div>
+
+<script>
+  // The file handle is remembered for the whole session so you only pick once.
+  let adventuresHandle = null;
+  let photoCount = 0;
+
+  // ── photo rows ───────────────────────────────────────────────────────────────
+  function addPhoto(src) {
+    photoCount++;
+    const id = photoCount;
+    const div = document.createElement('div');
+    div.className = 'photo-row';
+    div.id = 'pr-' + id;
+    div.innerHTML = `
+      <div class="field">
+        <label>Image path (relative to site root)</label>
+        <input type="text" id="psrc-${id}" placeholder="Images/MyPhoto.JPEG" value="${src || ''}" />
+      </div>
+      <button class="browse-btn" onclick="browseImage(${id})" title="Pick from Images folder">Browse</button>
+      <button class="rm-btn" onclick="rmPhoto(${id})">Remove</button>`;
+    document.getElementById('photos-container').appendChild(div);
+  }
+
+  function rmPhoto(id) {
+    const el = document.getElementById('pr-' + id);
+    if (el) el.remove();
+  }
+
+  // Browse for an image. The browser file picker can't start at an arbitrary
+  // WSL path, but it remembers the last-used folder between picks in the same
+  // session, so after your first pick inside Images/ it'll re-open there.
+  async function browseImage(rowId) {
+    try {
+      const [fh] = await window.showOpenFilePicker({
+        multiple: false,
+        types: [{
+          description: 'Images',
+          accept: { 'image/*': ['.jpg', '.jpeg', '.JPG', '.JPEG', '.png', '.PNG', '.webp', '.gif'] }
+        }]
+      });
+
+      // Build relative path. The File System Access API gives us the filename
+      // only (fh.name). We know images always live under Images/ so we prefix it.
+      // If the file is inside a subfolder of Images (e.g. Images/Red_River_05_2025/)
+      // the user can edit the path in the text field after browsing.
+      const input = document.getElementById('psrc-' + rowId);
+      if (input) input.value = 'Images/' + fh.name;
+    } catch (e) {
+      if (e.name !== 'AbortError') setStatus('Browse error: ' + e.message, 'error');
+    }
+  }
+
+  addPhoto(); // start with one empty row
+
+  function getPhotos() {
+    const sharedDate = document.getElementById('shared-date').value.trim();
+    const rows = document.querySelectorAll('#photos-container .photo-row');
+    const photos = [];
+    rows.forEach(row => {
+      const id = row.id.replace('pr-', '');
+      const src = (document.getElementById('psrc-' + id)?.value || '').trim();
+      if (src) photos.push({ src, date: sharedDate });
+    });
+    return photos;
+  }
+
+  // ── build the JS snippet string ──────────────────────────────────────────────
+  function buildSnippet() {
+    const title  = document.getElementById('title').value.trim();
+    const badge  = document.getElementById('badge').value.trim();
+    const lat    = document.getElementById('lat').value.trim();
+    const lon    = document.getElementById('lon').value.trim();
+    const cat    = document.getElementById('cat').value;
+    const desc   = document.getElementById('desc').value.trim();
+    const photos = getPhotos();
+
+    if (!title || !lat || !lon) { setStatus('Title, latitude, and longitude are required.', 'error'); return null; }
+    if (photos.length === 0)    { setStatus('Add at least one photo path.', 'error'); return null; }
+
+    const photoLines = photos.map(p =>
+      `                    { src: "${p.src}", date: "${p.date}" }`
+    ).join(',\n');
+
+    let s = `            {\n`;
+    s += `                title: "${title}",\n`;
+    s += `                badge: "${badge}",\n`;
+    if (cat) s += `                category: "${cat}",\n`;
+    s += `                lat: ${lat}, lon: ${lon},\n`;
+    s += `                photos: [\n${photoLines}\n                ],\n`;
+    s += `                description: "${desc.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"\n`;
+    s += `            },`;
+    return s;
+  }
+
+  // ── status helper ────────────────────────────────────────────────────────────
+  function setStatus(msg, type) {
+    const el = document.getElementById('status-msg');
+    el.textContent = msg;
+    el.className = 'status ' + type;
+  }
+
+  // ── main action: write pin directly into adventures.html ─────────────────────
+  async function addPin() {
+    const snippet = buildSnippet();
+    if (!snippet) return;
+
+    setStatus('Opening adventures.html — navigate to your website folder and select it…', 'info');
+
+    try {
+      if (!adventuresHandle) {
+        const [fh] = await window.showOpenFilePicker({
+          types: [{ description: 'HTML file', accept: { 'text/html': ['.html'] } }],
+          multiple: false,
+          id: 'adventures-html'   // browser remembers this location between opens
+        });
+        adventuresHandle = fh;
+      }
+
+      // Ensure we have readwrite permission
+      const perm = await adventuresHandle.requestPermission({ mode: 'readwrite' });
+      if (perm !== 'granted') { setStatus('Write permission denied.', 'error'); return; }
+
+      const file = await adventuresHandle.getFile();
+
+      // Friendly warning if the filename doesn't look right
+      if (file.name !== 'adventures.html') {
+        const ok = confirm(`Selected file is "${file.name}", not adventures.html. Continue anyway?`);
+        if (!ok) { adventuresHandle = null; setStatus('Cancelled.', 'info'); return; }
+      }
+
+      let html = await file.text();
+
+      // Locate the adventures array
+      const marker = 'const adventures = [';
+      const markerIdx = html.indexOf(marker);
+      if (markerIdx === -1) {
+        setStatus('Could not find the adventures array in this file. Wrong file?', 'error');
+        adventuresHandle = null;
+        return;
+      }
+
+      // Walk brackets to find the matching closing ]
+      let depth = 0;
+      let arrayStart = html.indexOf('[', markerIdx);
+      let insertAt = -1;
+      for (let i = arrayStart; i < html.length; i++) {
+        if (html[i] === '[') depth++;
+        else if (html[i] === ']') { depth--; if (depth === 0) { insertAt = i; break; } }
+      }
+
+      if (insertAt === -1) {
+        setStatus('Could not locate the end of the adventures array.', 'error');
+        return;
+      }
+
+      // Insert before the closing ]
+      const before = html.slice(0, insertAt).trimEnd();
+      const needsComma = !before.endsWith(',');
+      const insertion = (needsComma ? ',\n' : '\n') + snippet + '\n        ';
+      html = html.slice(0, insertAt) + insertion + html.slice(insertAt);
+
+      const writable = await adventuresHandle.createWritable();
+      await writable.write(html);
+      await writable.close();
+
+      setStatus('✓ Pin added and adventures.html saved! Refresh your browser to see it on the globe.', 'success');
+
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        setStatus('Cancelled — no changes made.', 'info');
+      } else {
+        setStatus('Error: ' + err.message, 'error');
+        adventuresHandle = null; // reset so the next attempt re-picks
+      }
+    }
+  }
+
+  // ── reset ────────────────────────────────────────────────────────────────────
+  function resetForm() {
+    ['title', 'badge', 'lat', 'lon', 'desc', 'shared-date'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('cat').value = '';
+    document.getElementById('photos-container').innerHTML = '';
+    document.getElementById('status-msg').className = 'status';
+    document.getElementById('status-msg').textContent = '';
+    photoCount = 0;
+    addPhoto();
+  }
+</script>
+</body>
+</html>
