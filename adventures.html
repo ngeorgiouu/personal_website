@@ -280,6 +280,12 @@
             box-shadow: 0 24px 80px rgba(0,0,0,0.7);
             animation: modalIn 0.28s ease;
             scroll-behavior: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        #adventure-modal::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
 
         @keyframes modalIn {
@@ -293,18 +299,27 @@
             background: #000;
             flex-shrink: 0;
             overflow: hidden;
-            transition: height 0.35s ease;
         }
 
         #carousel-track {
-            display: flex;
-            transition: transform 0.35s ease;
-            will-change: transform;
+            display: grid;
         }
 
         .carousel-slide {
-            flex: 0 0 100%;
+            grid-area: 1 / 1;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .carousel-slide.active {
             position: relative;
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .carousel-slide img {
@@ -896,7 +911,7 @@
             if (!a.category) a.category = 'general';
         });
 
-        let activeFilter = 'all';
+let activeFilter = 'all';
 
         function setFilter(filter) {
             activeFilter = filter;
@@ -966,7 +981,11 @@
             img.src = imgSrc;
         }
 
-        adventures.forEach(place => {
+        let pinQueue = [...adventures];
+
+        function processNextPin() {
+            if (pinQueue.length === 0) return;
+            const place = pinQueue.shift();
             const isInternational = !place.badge.includes('USA') && !place.badge.includes('KY') && !place.badge.includes('WA');
             const pinColor = place.category === 'golf' ? '#3a7d44'
                 : isInternational ? '#f59e0b'
@@ -995,11 +1014,13 @@
                     })
                 });
             });
-        });
+            setTimeout(processNextPin, 0);
+        }
+
+        setTimeout(processNextPin, 800);
 
         let carouselPhotos = [];
         let carouselIndex = 0;
-        let slideAspectRatios = [];
 
         const modalBg = document.getElementById('adventure-modal-bg');
         const modalBadge = document.getElementById('modal-badge');
@@ -1013,40 +1034,23 @@
         const nextBtn = document.getElementById('carousel-next');
         const counter = document.getElementById('photo-counter');
 
-        function applyHeight(idx) {
-            const ratio = slideAspectRatios[idx];
-            if (ratio != null) {
-                carousel.style.height = (carousel.offsetWidth * ratio) + 'px';
-            }
-        }
-
         function buildCarousel(photos) {
             carouselPhotos = photos;
             carouselIndex = 0;
-            slideAspectRatios = new Array(photos.length).fill(null);
 
             track.innerHTML = '';
             dotsWrap.innerHTML = '';
 
             photos.forEach((p, i) => {
                 const slide = document.createElement('div');
-                slide.className = 'carousel-slide';
+                slide.className = 'carousel-slide' + (i === 0 ? ' active' : '');
 
                 const img = document.createElement('img');
-                img.src = p.src;
+                // Only eagerly load first 2 slides, lazy-load the rest
+                img.src = p.src;  // not conditional, we want the browser to handle caching and loading
+                img.dataset.src = p.src;  // ← add this
                 img.alt = '';
-
-                function storeRatio() {
-                    if (!img.naturalWidth) return;
-                    slideAspectRatios[i] = img.naturalHeight / img.naturalWidth;
-                    if (i === carouselIndex) applyHeight(i);
-                }
-
-                if (img.complete && img.naturalWidth) {
-                    storeRatio();
-                } else {
-                    img.addEventListener('load', storeRatio, { once: true });
-                }
+                // ... rest of your existing buildCarousel loop unchanged
 
                 slide.appendChild(img);
 
@@ -1075,15 +1079,21 @@
         }
 
         function updateCarousel() {
-            track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+            track.querySelectorAll('.carousel-slide')
+                .forEach((s, i) => s.classList.toggle('active', i === carouselIndex));
             dotsWrap.querySelectorAll('.carousel-dot')
                 .forEach((d, i) => d.classList.toggle('active', i === carouselIndex));
             counter.textContent = `${carouselIndex + 1} / ${carouselPhotos.length}`;
-            applyHeight(carouselIndex);
         }
 
         function goTo(idx) {
             carouselIndex = (idx + carouselPhotos.length) % carouselPhotos.length;
+            // Preload next slide
+            const next = (carouselIndex + 1) % carouselPhotos.length;
+            const slides = track.querySelectorAll('.carousel-slide img');
+            if (slides[next] && !slides[next].src) {
+                slides[next].src = slides[next].dataset.src;
+            }
             updateCarousel();
         }
 

@@ -15,7 +15,7 @@
             --rust: #c94a2a;
             --gold: #D4A853;
             --muted: rgba(245,240,232,0.45);
-             }       
+        }       
 
         html { scroll-behavior: smooth; }
 
@@ -27,7 +27,6 @@
             overflow-x: hidden;
         }
 
-        /* ── CURSOR ── */
         .cursor {
             position: fixed;
             width: 12px;
@@ -53,12 +52,9 @@
             transition: width 0.25s, height 0.25s, border-color 0.2s;
         }
 
-        /* ── TOP NAV ── */
         .top-bar {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             z-index: 100;
             padding: 22px 40px;
             display: flex;
@@ -77,16 +73,9 @@
             letter-spacing: 0.12em;
             text-decoration: none;
         }
+        .monogram em { color: var(--rust); font-style: normal; }
 
-        .monogram em {
-            color: var(--rust);
-            font-style: normal;
-        }
-
-        nav.main-nav {
-            display: flex;
-            align-items: center;
-        }
+        nav.main-nav { display: flex; align-items: center; }
 
         nav.main-nav a {
             position: relative;
@@ -103,46 +92,36 @@
         nav.main-nav a::before {
             content: '';
             position: absolute;
-            bottom: 4px;
-            left: 50%;
+            bottom: 4px; left: 50%;
             transform: translateX(-50%);
-            width: 0;
-            height: 1px;
+            width: 0; height: 1px;
             background: var(--rust);
             transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
         }
 
         nav.main-nav a:hover,
-        nav.main-nav a.active {
-            color: var(--cream);
-        }
+        nav.main-nav a.active { color: var(--cream); }
 
         nav.main-nav a:hover::before,
-        nav.main-nav a.active::before {
-            width: calc(100% - 44px);
-        }
+        nav.main-nav a.active::before { width: calc(100% - 44px); }
 
         nav.main-nav a + a::after {
             content: '·';
             position: absolute;
-            left: 0;
-            top: 50%;
+            left: 0; top: 50%;
             transform: translate(-50%, -50%);
             color: rgba(245,240,232,0.15);
             font-size: 16px;
             pointer-events: none;
         }
-        
-        /* ── PAGE HERO ── */
+
         .page-hero {
             padding: 160px 40px 40px;
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
             gap: 40px;
-            min-height: 600px;  
-
-            /* ADD THESE */
+            min-height: 600px;
             background-image: 
                 linear-gradient(to bottom, rgba(26,26,26,0.55), rgba(26,26,26,0.75)),
                 url('Images/projects_page.jpg');
@@ -167,35 +146,159 @@
             color: var(--cream);
         }
 
-        .hero-title em {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 0.46em;
-            color: var(--gold);
+        /* ── PROJECT CARD GRID SELECTOR ── */
+        .project-selector-wrap {
+            background: rgba(20,20,20,0.97);
+            border-bottom: 1px solid rgba(245,240,232,0.08);
+            padding: 36px 40px;
+        }
+
+        .project-selector-label {
+            font-size: 9px;
+            letter-spacing: 0.45em;
+            color: rgba(245,240,232,0.28);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .project-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 16px;
+            max-width: 1020px;
+        }
+
+        .project-card-btn {
+            position: relative;
+            border: 1px solid rgba(245,240,232,0.1);
+            background: rgba(245,240,232,0.02);
+            cursor: none;
+            overflow: hidden;
+            transition: border-color 0.3s, background 0.3s;
+            text-align: left;
             display: block;
-            letter-spacing: 0.02em;
+            width: 100%;
+            padding: 0;
+        }
+
+        .project-card-btn:hover {
+            border-color: rgba(245,240,232,0.22);
+            background: rgba(245,240,232,0.05);
+        }
+
+        .project-card-btn.active {
+            border-color: var(--gold);
+            background: rgba(212,168,83,0.04);
+        }
+
+        .project-card-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--rust);
+        }
+
+        /* Thumbnail */
+        .project-card-thumb {
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+            background: rgba(245,240,232,0.04);
+            position: relative;
+        }
+
+        .project-card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+            filter: brightness(0.7) saturate(0.75);
+            transition: filter 0.4s, transform 0.5s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .project-card-btn:hover .project-card-thumb img,
+        .project-card-btn.active .project-card-thumb img {
+            filter: brightness(0.92) saturate(1);
+            transform: scale(1.05);
+        }
+
+        /* Fallback when no image / image fails */
+        .project-card-thumb-placeholder {
+            width: 100%;
+            height: 160px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(245,240,232,0.03);
+            border-bottom: 1px solid rgba(245,240,232,0.06);
+        }
+
+        .project-card-thumb-placeholder span {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            letter-spacing: 0.05em;
+            color: rgba(245,240,232,0.07);
+        }
+
+        /* Info row */
+        .project-card-info {
+            padding: 12px 14px 16px;
+        }
+
+        .project-card-num {
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            color: rgba(245,240,232,0.28);
+            display: block;
+            margin-bottom: 4px;
+            transition: color 0.25s;
+        }
+
+        .project-card-btn.active .project-card-num { color: var(--rust); }
+
+        .project-card-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 17px;
+            letter-spacing: 0.14em;
+            color: rgba(245,240,232,0.55);
+            display: block;
+            line-height: 1.15;
+            transition: color 0.25s;
+        }
+
+        .project-card-btn:hover .project-card-title,
+        .project-card-btn.active .project-card-title { color: var(--cream); }
+
+        .project-card-badge {
+            display: inline-block;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--rust);
+            border: 1px solid rgba(201,74,42,0.3);
+            padding: 2px 7px;
             margin-top: 8px;
         }
 
-        .hero-right {
-            text-align: right;
-            font-size: 10px;
-            letter-spacing: 0.22em;
-            color: var(--muted);
-            line-height: 2.2;
-            text-transform: uppercase;
-            flex-shrink: 0;
+        /* Active check mark */
+        .project-card-check {
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 20px; height: 20px;
+            border: 1px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: rgba(26,26,26,0.8);
         }
 
-        .hero-right a {
-            color: var(--gold);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
+        .project-card-check svg { width: 10px; height: 10px; }
 
-        .hero-right a:hover {
-            color: var(--cream);
-        }
+        .project-card-btn.active .project-card-check { opacity: 1; }
 
         /* ── CONTENT ── */
         .content {
@@ -204,7 +307,18 @@
             padding: 0 40px 120px;
         }
 
-        /* ── SECTION LABEL ── */
+        .project-panel { display: none; }
+
+        .project-panel.active {
+            display: block;
+            animation: fadeUp 0.45s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
         .section-label {
             font-size: 14px;
             letter-spacing: 0.4em;
@@ -223,15 +337,7 @@
             background: rgba(245,240,232,0.1);
         }
 
-        /* ── PROJECT BLOCK ── */
-        .project-block {
-            padding: 80px 0;
-            border-bottom: 1px solid rgba(245,240,232,0.08);
-        }
-
-        .project-block:last-of-type {
-            border-bottom: none;
-        }
+        .project-block { padding: 80px 0; }
 
         .project-block h2 {
             font-family: 'Bebas Neue', sans-serif;
@@ -251,9 +357,7 @@
             line-height: 1;
         }
 
-        .project-block h3:first-of-type {
-            margin-top: 0;
-        }
+        .project-block h3:first-of-type { margin-top: 0; }
 
         .project-block p {
             font-size: 13px;
@@ -262,10 +366,8 @@
             margin-bottom: 16px;
         }
 
-        .project-block p:last-of-type {
-            margin-bottom: 0;
-        }
- 
+        .project-block p:last-of-type { margin-bottom: 0; }
+
         .project-block a {
             color: var(--gold);
             text-decoration: none;
@@ -273,10 +375,7 @@
             transition: color 0.2s, border-color 0.2s;
         }
 
-        .project-block a:hover {
-            color: var(--cream);
-            border-color: var(--cream);
-        }
+        .project-block a:hover { color: var(--cream); border-color: var(--cream); }
 
         .project-intro {
             margin-top: 0;
@@ -284,7 +383,6 @@
             max-width: 780px;
         }
 
-        /* Two-column layout for image + text */
         .project-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -293,17 +391,10 @@
             margin-top: 24px;
         }
 
-        .project-grid.reverse {
-            direction: rtl;
-        }
+        .project-grid.reverse { direction: rtl; }
+        .project-grid.reverse > * { direction: ltr; }
 
-        .project-grid.reverse > * {
-            direction: ltr;
-        }
-
-        .project-img-wrap {
-            position: relative;
-        }
+        .project-img-wrap { position: relative; }
 
         .project-img-wrap img {
             width: 100%;
@@ -312,30 +403,6 @@
             filter: brightness(0.85) contrast(1.05) saturate(0.9);
         }
 
-        .project-img-wrap::before,
-        .project-img-wrap::after {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            z-index: 2;
-        }
-
-        .project-img-wrap::before {
-            top: -6px;
-            left: -6px;
-            border-top: 1.5px solid var(--gold);
-            border-left: 1.5px solid var(--gold);
-        }
-
-        .project-img-wrap::after {
-            bottom: -6px;
-            right: -6px;
-            border-bottom: 1.5px solid var(--rust);
-            border-right: 1.5px solid var(--rust);
-        }
-
-        /* Full-width image */
         .full-img-wrap {
             position: relative;
             margin: 32px 0;
@@ -348,32 +415,9 @@
             filter: brightness(0.88) contrast(1.04) saturate(0.9);
         }
 
-        .full-img-wrap::before,
-        .full-img-wrap::after {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            z-index: 2;
-        }
-
-        .full-img-wrap::before {
-            top: -6px;
-            left: -6px;
-            border-top: 1.5px solid var(--gold);
-            border-left: 1.5px solid var(--gold);
-        }
-
-        .full-img-wrap::after {
-            bottom: -6px;
-            right: -6px;
-            border-bottom: 1.5px solid var(--rust);
-            border-right: 1.5px solid var(--rust);
-        }
-
         .wip-badge {
             display: inline-block;
-            font-size: 9px;
+            font-size: 12px;
             letter-spacing: 0.25em;
             text-transform: uppercase;
             color: var(--rust);
@@ -393,7 +437,6 @@
             margin-top: 24px;
         }
 
-        /* ── GRAIN + FADE ── */
         .grain {
             position: fixed;
             inset: 0;
@@ -410,11 +453,6 @@
             animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
         }
 
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── FOOTER ── */
         footer {
             border-top: 1px solid rgba(245,240,232,0.08);
             padding: 32px 40px;
@@ -428,65 +466,32 @@
         }
 
         @media (max-width: 700px) {
-            .top-bar { 
-                padding: 18px 20px; 
-                gap: 12px;
-            }
+            .top-bar { padding: 18px 20px; gap: 12px; }
             .monogram { font-size: 18px; white-space: nowrap; flex-shrink: 0; }
-            nav.main-nav a { 
-                padding: 8px 8px; 
-                font-size: 11px; 
-                letter-spacing: 0.08em;
-            }
-            .page-hero { 
-                padding: 130px 20px 60px; 
+            nav.main-nav a { padding: 8px 8px; font-size: 11px; letter-spacing: 0.08em; }
+            .page-hero {
+                padding: 130px 20px 60px;
                 flex-direction: column-reverse;
-                align-items: flex-start; 
-                gap: 24px; 
+                align-items: flex-start;
+                gap: 24px;
                 background-position: 72% 50%;
             }
-            .hero-right { text-align: left; }
+            .project-selector-wrap { padding: 24px 20px; }
+            .project-selector-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
             .content { padding: 0 20px 80px; }
             footer { flex-direction: column; gap: 8px; text-align: center; }
             html, body { cursor: auto; }
             .cursor, .cursor-ring { display: none; }
-
-            /* ── PROJECT CONTENT FIXES ── */
-            .project-grid,
-            .project-grid.reverse {
+            .project-grid, .project-grid.reverse {
                 grid-template-columns: 1fr;
                 direction: ltr;
                 gap: 28px;
             }
-
-            .project-img-wrap img {
-                width: 100%;
-                object-position: center;
-            }
-
-            .project-block {
-                padding: 48px 0;
-            }
-
-            .project-block h2 {
-                margin-bottom: 20px;
-            }
-
-            .project-block h3 {
-                margin: 32px 0 16px;
-            }
-
-            .project-intro {
-                margin-bottom: 28px;
-            }
-
-            .coming-soon {
-                padding: 28px 20px;
-            }
-
-            .full-img-wrap img {
-                object-position: center;
-            }
+            .project-block { padding: 48px 0; }
+            .project-block h2 { margin-bottom: 20px; }
+            .project-block h3 { margin: 32px 0 16px; }
+            .project-intro { margin-bottom: 28px; }
+            .coming-soon { padding: 28px 20px; }
         }
     </style>
 </head>
@@ -496,7 +501,6 @@
 <div class="cursor-ring" id="cursorRing"></div>
 <div class="grain"></div>
 
-<!-- ── TOP NAV ── -->
 <div class="top-bar">
     <a class="monogram" href="index.html">Nicky-G<em>.</em></a>
     <nav class="main-nav">
@@ -507,136 +511,340 @@
     </nav>
 </div>
 
-<!-- ── PAGE HERO ── -->
 <div class="page-hero fade-in">
     <div class="hero-left">
-        <div class="hero-title">
-            Projects
-        </div>
+        <div class="hero-title">Projects</div>
         <div class="hero-eyebrow">Personal Engineering · Woodworking · Side Quests</div>
     </div>
 </div>
 
-<!-- ── CONTENT ── -->
+<!-- ══════════════════════════════════════
+     PROJECT CARD GRID SELECTOR
+     To add a project:
+       1. Copy a .project-card-btn block below and update the number, title, badge, and src
+       2. Copy a .project-panel block in the content section and fill in the content
+     ══════════════════════════════════════ -->
+<div class="project-selector-wrap fade-in" style="animation-delay:0.1s;">
+    <div class="project-selector-label">Select a project</div>
+    <div class="project-selector-grid">
+
+        <!-- ── CARD 01: TVC ROCKET ── -->
+        <button class="project-card-btn active" data-target="project-tvc" aria-pressed="true">
+            <div class="project-card-check" aria-hidden="true">
+                <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 5l2.5 2.5 4.5-5" stroke="#D4A853" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="project-card-thumb">
+                <!--
+                    THUMBNAIL: replace the src below with your own image.
+                    Recommended size: 800×450px (16:9).
+                    Example: src="Images/TVC Project/thumb.jpg"
+                    If the image fails to load, the large number placeholder shows automatically.
+                -->
+                <img src="Images/TVC Project/Final_Part.png" alt="TVC Rocket"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="project-card-thumb-placeholder">
+                    <span>01</span>
+                </div>
+            </div>
+            <div class="project-card-info">
+                <span class="project-card-num">01</span>
+                <span class="project-card-title">TVC Rocket</span>
+                <span class="project-card-badge">In Progress</span>
+            </div>
+        </button>
+
+        <!-- ── CARD 02: STANDING DESK ── -->
+        <button class="project-card-btn" data-target="project-desk" aria-pressed="false">
+            <div class="project-card-check" aria-hidden="true">
+                <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 5l2.5 2.5 4.5-5" stroke="#D4A853" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="project-card-thumb">
+                <!--
+                    THUMBNAIL: replace the src below with your own image.
+                    Example: src="Images/Desk/thumb.jpg"
+                -->
+                <img src="Images/Desk_1.jpg" alt="Standing Desk"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="project-card-thumb-placeholder">
+                    <span>02</span>
+                </div>
+            </div>
+            <div class="project-card-info">
+                <span class="project-card-num">02</span>
+                <span class="project-card-title">Standing Desk</span>
+                <span class="project-card-badge">Completed</span>
+            </div>
+        </button>
+
+        <!--
+        ══ TEMPLATE: copy this block to add a new project card ══
+        <button class="project-card-btn" data-target="project-NEW" aria-pressed="false">
+            <div class="project-card-check" aria-hidden="true">
+                <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 5l2.5 2.5 4.5-5" stroke="#D4A853" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="project-card-thumb">
+                <img src="Images/your_thumb.jpg" alt="Project Name"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="project-card-thumb-placeholder">
+                    <span>03</span>
+                </div>
+            </div>
+            <div class="project-card-info">
+                <span class="project-card-num">03</span>
+                <span class="project-card-title">Project Name</span>
+                <span class="project-card-badge">In Progress</span>
+            </div>
+        </button>
+        -->
+
+    </div>
+</div>
+
+<!-- ── CONTENT PANELS ── -->
 <div class="content">
 
-    <div class="project-block fade-in" style="animation-delay:0.1s;">
-        <div class="section-label">Project 01</div>
-        <h2>Thrust Vector<br>Controlled Rocket</h2>
-        <div class="wip-badge">In Progress</div>
+    <!-- ══ PANEL 01: TVC ROCKET ══ -->
+    <div class="project-panel active" id="project-tvc">
+        <div class="project-block">
+            <div class="section-label">Project 01</div>
+            <h2>Thrust Vector<br>Controlled Rocket</h2>
+            <div class="wip-badge">In Progress</div>
 
-        <p class="project-intro">
-            For my first personal engineering project, I am designing a rocket that relies on engine gimbaling for stability instead of fins. This is no easy task, but I am prepared to iterate and refine the design until I achieve success. The idea came to life during senior year winter break and now doubles as my Senior Physics Design Project. I'm targeting a static thrust test by the end of the semester and will keep updating this page as progress is made.
-        </p>
+            <p class="project-intro">
+                For my first personal engineering project, I am designing a rocket that relies on engine gimbaling for stability instead of fins. This is no easy task, but I am prepared to iterate and refine the design until I achieve success. The idea came to life during senior year winter break and now doubles as my Senior Physics Design Project. I'm targeting a static thrust test by the end of the semester and will keep updating this page as progress is made.
+            </p>
 
-        <div class="sub-section">
-            <h3 style="margin-top: 24px;">Flight Controller &amp; Software</h3>
-            <div class="full-img-wrap">
-                <img src="Images/Hardware_Diagram.jpg" alt="Hardware diagram">
-            </div>
-            <div class="project-grid">
-                <div class="project-img-wrap">
-                    <img src="Images/TVC Project/Computer.jpg" alt="Flight controller board">
-                </div>
-                <div>
-                    <p>
-                        The core of this project involves designing a custom flight controller and its accompanying software. With no prior PCB experience, I went with a perforated circuit board approach — I'm now fully convinced I'll never choose a perforated board again. Soldering everything by hand has scarred me.
-                    </p>
-                    <p>
-                        The setup consists of a primary board serving as the flight controller and a secondary board dedicated to powering all systems. A 1500 mAh 7.4V battery was selected to power everything. Two step-down voltage regulators were used: one for the flight controller and one for all servos. All sensors (barometer, IMU, FRAM, etc.) are 3V-capable, so the Teensy supplies them directly.
-                    </p>
-                    <p>
-                        For state indication, I used a buzzer and an RGB LED to show which state the system is currently in. Still working on a cool startup sound — trying to top the one used in Pixhawk autopilots, which has been a big inspiration for this project. The figure shows the finished power board and the flight computer board pre-solder.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="sub-section">
-            <h3 style="margin-top: 24px;">Payload Design</h3>
-            <div class="project-grid reverse">
-                <div class="project-img-wrap">
-                    <img src="Images/TVC Project/Struc.jpg" alt="Payload structure CAD">
-                </div>
-                <div>
-                    <p>
-                        Once the flight computer was prototyped, it was time to move on to CAD. The main goal for this design was modularity — creating components that could easily connect to one another. Long structural side beams tie everything together, attaching securely to each module. The circuit boards are mounted with screws, held in place by custom brackets extending from the top and bottom of each segment.
-                    </p>
-                    <p>
-                        The full assembly consists of three main parts: a top piece holding the flight computer, a middle piece supporting the bottom of the flight computer and top of the power board, and a bottom piece supporting the power board and serving as the battery holder. The figure shows the final, fully assembled structure.
-                    </p>
+            <div class="sub-section">
+                <h3 style="margin-top: 24px;">Flight Controller &amp; Software</h3>
+                <div class="project-grid">
+                    <div class="project-img-wrap">
+                        <img src="Images/TVC Project/Computer.jpg" alt="Flight controller board">
+                    </div>
+                    <div>
+                        <p>
+                            The core of this project involves designing a custom flight controller and its accompanying software. With no prior PCB experience, I went with a perforated circuit board approach — I'm now fully convinced I'll never choose a perforated board again. Soldering everything by hand has scarred me.
+                        </p>
+                        <p>
+                            The setup consists of a primary board serving as the flight controller and a secondary board dedicated to powering all systems. A 1500 mAh 7.4V battery was selected to power everything. Two step-down voltage regulators were used: one for the flight controller and one for all servos. All sensors (barometer, IMU, FRAM, etc.) are 3V-capable, so the Teensy supplies them directly.
+                        </p>
+                        <p>
+                            For state indication, I used a buzzer and an RGB LED to show which state the system is currently in. Still working on a cool startup sound — trying to top the one used in Pixhawk autopilots, which has been a big inspiration for this project.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="sub-section">
-            <h3 style="margin-top: 24px;">TVC Mount</h3>
-            <div class="project-grid">
-                <div class="project-img-wrap">
-                    <img src="Images/TVC Project/Final_Part.png" alt="TVC gimbal mount CAD">
-                </div>
-                <div>
-                    <p>
-                        This design was wholeheartedly inspired — okay, stolen — from one of my biggest inspirations, Joe Barnard, the creator of <a href="https://bps.space/" target="_blank">BPS Space</a>. His platform has been an invaluable resource since the start of this project, especially in helping me develop the flight controller and TVC mount. The specific video that helped me most is linked <a href="https://www.youtube.com/watch?v=4cw9K9yuIyU" target="_blank">here</a>.
-                    </p>
-                    <p>
-                        The gimbal mount consists of three main parts: the gimbal tube, an inner component, and an outer component. The inner part rotates the motor on one axis and actuates the gimbal tube, while the outer part allows the whole assembly to pivot relative to the inner part.
-                    </p>
-                    <p>
-                        The most challenging aspect was working within the constraint of the rocket's 74mm outer body tube. Fitting the entire TVC system inside that diameter takes some finesse.
-                    </p>
+            <div class="sub-section">
+                <h3 style="margin-top: 24px;">Payload Design</h3>
+                <div class="project-grid reverse">
+                    <div class="project-img-wrap">
+                        <img src="Images/TVC Project/Struc.jpg" alt="Payload structure CAD" style="height: 400px; object-fit: cover; object-position: center;">
+                    </div>
+                    <div>
+                        <p>
+                            Once the flight computer was prototyped, it was time to move on to CAD. The main goal for this design was modularity — creating components that could easily connect to one another. Long structural side beams tie everything together, attaching securely to each module. The circuit boards are mounted with screws, held in place by custom brackets extending from the top and bottom of each segment.
+                        </p>
+                        <p>
+                            The full assembly consists of three main parts: a top piece holding the flight computer, a middle piece supporting the bottom of the flight computer and top of the power board, and a bottom piece supporting the power board and serving as the battery holder.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="sub-section">
-            <h3 style="margin-top: 24px;">Flight Simulation</h3>
-            <div class="coming-soon">Simulation results coming soon</div>
+            <div class="sub-section">
+                <h3 style="margin-top: 24px;">TVC Mount</h3>
+                <div class="project-grid">
+                    <div class="project-img-wrap">
+                        <img src="Images/TVC Project/Final_Part.png" alt="TVC gimbal mount CAD">
+                    </div>
+                    <div>
+                        <p>
+                            This design was wholeheartedly inspired — okay, stolen — from one of my biggest inspirations, Joe Barnard, the creator of <a href="https://bps.space/" target="_blank">BPS Space</a>. His platform has been an invaluable resource since the start of this project, especially in helping me develop the flight controller and TVC mount. The specific video that helped me most is linked <a href="https://www.youtube.com/watch?v=4cw9K9yuIyU" target="_blank">here</a>.
+                        </p>
+                        <p>
+                            The gimbal mount consists of three main parts: the gimbal tube, an inner component, and an outer component. The inner part rotates the motor on one axis and actuates the gimbal tube, while the outer part allows the whole assembly to pivot relative to the inner part.
+                        </p>
+                        <p>
+                            The most challenging aspect was working within the constraint of the rocket's 74mm outer body tube. Fitting the entire TVC system inside that diameter takes some finesse.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-section">
+                <h3 style="margin-top: 24px;">Flight Simulation</h3>
+                <div class="coming-soon">Simulation results coming soon</div>
+            </div>
         </div>
     </div>
 
+    <!-- ══ PANEL 02: STANDING DESK ══ -->
+    <div class="project-panel" id="project-desk">
+        <div class="project-block">
+
+            <div class="section-label">Project 02</div>
+            <h2>Standing<br>Desk Build</h2>
+            <div class="wip-badge">Completed</div>
+
+            <p class="project-intro">
+                When I moved into a one-bedroom apartment in the beautiful Lettered Streets neighborhood of Bellingham, I made a deliberate choice: I rented the place unfurnished. I wanted the responsibility and freedom of furnishing the space myself.
+                I had a temporary desk, a square foldable card table, that just needed to go.
+                I drew inspiration from my older brother Peter, who bought a live edge wood slab and built a standing desk for himself. So, as one would, I took to Facebook Marketplace.
+                This took me to a small island called Guemes, where I meet my guy RV (yep his name is RV). 
+            </p>
+
+            <div class="sub-section">
+                <h3 style="margin-top: 24px;">Guemes Island Adventure</h3>
+                <div class="project-grid reverse">
+                    <div class="project-img-wrap">
+                        <img src="Images/Guemes_4.jpg" alt="Guemes Island Ferry">
+                    </div>
+                    <div>
+                        <p>
+                            DeeBee was visiting me in Bellingham at the time, and I decided to drop an adventure proposal on him: a trip to Guemes Island to check out RV's live edge slabs. After work I picked him up at the bus stop in Burlington. We ventured to the Guemes Island Ferry, just on the edge of Anacortes.
+                            The ferry ride was short but scenic, and we mad a short ride over to RV's place. We puleld into his driveway and were a little scared to approach the property. RV came out to meet us and showed us his shop. Instead of having a large space for his woodshop, we buiilt it up modularly by using shippping crates.
+                            Literally his live edge planer was shipped from Australia in a crate, and he just repurposed the crate as the base for the planer. I settled on a Oak Slab that was 67" x 30" and about 2.5" thick. RV gave us some Beta on the best scenic spots in Guemes and we headed out to explore the island a bit before catching the ferry back. We stopped at a little beach access point and watched the sunset over the water. It was a great way to end the day and kick off the desk project.                     
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-section">
+                <h3 style="margin-top: 24px;">Epoxy & Sanding</h3>
+                <div class="project-grid">
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <div class="project-img-wrap">
+                            <img src="Images/Standing Desk Project/Epoxy_2.jpg" alt="Epoxy application">
+                        </div>
+                        <div class="project-img-wrap">
+                            <img src="Images/Standing Desk Project/Sanding_2.jpg" alt="Sanding detail" style="height: 300px; object-fit: cover; object-position: center;">
+                        </div>
+                    </div>
+                    <div>
+                        <p>
+                            After getting the slab home, I set up a workspace in my apartment and got to work. The first step was cutting down the slab to size. I needed two people to maneuver it, so I asked Harpoon if he would be down to help me for a weekend of fun. I used a circular saw to cut the length from 67" to a more managable 52". 
+                        </p>        
+                        <p>   
+                            The second step was filling in some of the cracks with some wood Epoxy. I made the mistake of getting a 3 minute working time epoxy, as that was all they had at the store, but hey the guy gave me free black dye. 
+                            I learned really quick how fast the stuff sets. This made the process x3 longer than it should have been, as I had to mix the batches in small sizes to avoid it blocking up.
+                            I ended up doing about 4 round of epoxy application, sanding it down to smooth it out in between each round. This was definitely the most time consuming part of the process.
+                            The sanding setup was accomplished by utilizing my apartment's fire escape. Many people stumbled upon me sanding a giant piece of wood on the fire escape. Luckily no one informed the landlord.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-section">
+                <h3 style="margin-top: 24px;">Stain & Assembly</h3>
+
+                <!-- video left + stacked images right -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
+                    <div class="project-img-wrap" style="overflow: hidden;">
+                        <video autoplay muted loop playsinline style="width: 100%; height: 450px; object-fit: cover; object-position: center; display: block;">
+                            <source src="Images/Standing Desk Project/Stain.MOV" type="video/mp4">
+                        </video>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div class="project-img-wrap" style="overflow: hidden;">
+                            <img src="Images/Standing Desk Project/Inserts_2.jpg" alt="Final product" style="width: 100%; height: 194px; object-fit: cover; object-position: 50% 60%;">
+                        </div>
+                        <div class="project-img-wrap" style="overflow: hidden;">
+                            <img src="Images/Standing Desk Project/Assembly.jpg" alt="Assembly process" style="width: 100%; height: 244px; object-fit: cover; object-position: 50% 65%;">
+                        </div>
+                    </div>
+                </div>
+                <p style="width: 100%;">
+                    Went for a Rubiomonocoat finish, preserving the natural look of the oak while giving it a nice protective layer. I used a kitchen spatula to spread the finish evenly across the top surface. Have been hesitant to cook with that spatula since.
+                    I assembled the standing desk frame I got from Amazon, installing custom inserts to connect the legs to the desk top. Did some math and thankfully everything lined up. Flipping it upright for the first time nearly broke my back. The final product turned out amazing. Super happy with the finish and the choice to add black dye into the epoxy. Man did I fill alive when I it finally came together.
+                    Happy to say my apartment it now not a woodshop, well atleast for now.
+                </p>
+                <div class="full-img-wrap">
+                    <img src="Images/Standing Desk Project/Final_2.jpg" alt="Final result">
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!--
+    ══ TEMPLATE: copy this block to add a new project panel ══
+    The id here must match the data-target on the card button above.
+
+    <div class="project-panel" id="project-NEW">
+        <div class="project-block">
+            <div class="section-label">Project 03</div>
+            <h2>Your Project<br>Title Here</h2>
+            <div class="wip-badge">In Progress</div>
+            <p class="project-intro">Your intro paragraph here.</p>
+            <div class="coming-soon">Documentation coming soon</div>
+        </div>
+    </div>
+    -->
+
 </div>
 
-<!-- ── FOOTER ── -->
 <footer>
     <span>© 2026 Nicholas Georgiou</span>
     <span>Olathe, Kansas</span>
 </footer>
 
 <script>
+/* ── CURSOR ── */
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
 let mx = 0, my = 0, rx = 0, ry = 0;
 
-document.addEventListener('mousemove', e => {
-    mx = e.clientX;
-    my = e.clientY;
-});
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
 (function animCursor() {
     rx += (mx - rx) * 0.14;
     ry += (my - ry) * 0.14;
     cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
+    cursor.style.top  = my + 'px';
+    ring.style.left   = rx + 'px';
+    ring.style.top    = ry + 'px';
     requestAnimationFrame(animCursor);
 })();
 
-document.querySelectorAll('a').forEach(el => {
+document.querySelectorAll('a, button').forEach(el => {
     el.addEventListener('mouseenter', () => {
-        cursor.style.width = '20px';
-        cursor.style.height = '20px';
-        ring.style.width = '60px';
-        ring.style.height = '60px';
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '60px'; ring.style.height = '60px';
         ring.style.borderColor = 'var(--rust)';
     });
     el.addEventListener('mouseleave', () => {
-        cursor.style.width = '12px';
-        cursor.style.height = '12px';
-        ring.style.width = '40px';
-        ring.style.height = '40px';
+        cursor.style.width = '12px'; cursor.style.height = '12px';
+        ring.style.width = '40px'; ring.style.height = '40px';
         ring.style.borderColor = '';
+    });
+});
+
+/* ── PROJECT CARD SWITCHER ── */
+const cardBtns = document.querySelectorAll('.project-card-btn');
+const panels   = document.querySelectorAll('.project-panel');
+
+cardBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (btn.classList.contains('active')) return;
+
+        cardBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed','true');
+
+        panels.forEach(p => p.classList.remove('active'));
+        const target = document.getElementById(btn.dataset.target);
+        if (target) {
+            target.classList.add('active');
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     });
 });
 </script>
