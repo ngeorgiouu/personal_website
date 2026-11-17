@@ -253,6 +253,151 @@
             line-height: 1;
         }
 
+        #timeline-wrap {
+            position: fixed;
+            top: 110px;
+            right: 28px;
+            z-index: 150;
+            width: min(390px, calc(100vw - 40px));
+            padding: 12px 16px 10px;
+            border: 1px solid rgba(245,240,232,0.16);
+            border-radius: 12px;
+            background: rgba(20,20,20,0.78);
+            color: var(--cream);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            pointer-events: auto;
+        }
+
+        #timeline-topline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        #timeline-heading {
+            color: rgba(245,240,232,0.68);
+            font-size: 0.58rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        #timeline-range-label {
+            flex: 1;
+            padding: 0 6px;
+            color: var(--gold);
+            font-size: 0.64rem;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #timeline-control {
+            position: relative;
+            height: 26px;
+            margin: 0 8px;
+            touch-action: none;
+        }
+
+        #timeline-track,
+        #timeline-selection {
+            position: absolute;
+            top: 11px;
+            height: 4px;
+            border-radius: 99px;
+        }
+
+        #timeline-track {
+            left: 0;
+            right: 0;
+            background: rgba(245,240,232,0.2);
+        }
+
+        #timeline-selection {
+            z-index: 2;
+            min-width: 8px;
+            background: var(--gold);
+            cursor: grab;
+        }
+
+        #timeline-selection:active { cursor: grabbing; }
+
+        .timeline-range {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 26px;
+            margin: 0;
+            appearance: none;
+            -webkit-appearance: none;
+            background: transparent;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .timeline-range::-webkit-slider-runnable-track {
+            height: 26px;
+            background: transparent;
+        }
+
+        .timeline-range::-moz-range-track {
+            height: 26px;
+            background: transparent;
+        }
+
+        .timeline-range::-webkit-slider-thumb {
+            width: 14px;
+            height: 14px;
+            margin-top: 6px;
+            appearance: none;
+            -webkit-appearance: none;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+            pointer-events: auto;
+            cursor: ew-resize;
+        }
+
+        .timeline-range::-moz-range-thumb {
+            width: 10px;
+            height: 10px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+            pointer-events: auto;
+            cursor: ew-resize;
+        }
+
+        #timeline-years {
+            display: flex;
+            justify-content: space-between;
+            margin: -1px 6px 0;
+            color: rgba(245,240,232,0.56);
+            font-size: 0.56rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #timeline-all {
+            border: 0;
+            padding: 3px 5px;
+            background: transparent;
+            color: rgba(245,240,232,0.7);
+            font: 0.58rem 'DM Mono', monospace;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        #timeline-all:hover { color: #fff; }
+
+        @media (max-width: 700px) {
+            #timeline-wrap { top: 110px; right: 12px; width: min(340px, calc(100vw - 24px)); }
+        }
+
         #adventure-modal-bg {
             display: none;
             position: fixed;
@@ -269,15 +414,17 @@
         }
 
         #adventure-modal {
-            background: #111;
-            border-radius: 16px;
-            overflow-y: auto;
-            width: 100%;
-            max-width: 450px;
+            background: transparent;
+            border-radius: 0;
+            overflow: visible;
+            width: fit-content;
+            max-width: calc(100vw - 40px);
             max-height: 90vh;
             display: flex;
-            flex-direction: column;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+            flex-direction: row;
+            align-items: stretch;
+            gap: 24px;
+            box-shadow: none;
             animation: modalIn 0.28s ease;
             scroll-behavior: auto;
             scrollbar-width: none; /* Firefox */
@@ -294,15 +441,19 @@
         }
 
         #modal-carousel {
-            width: 100%;
+            width: fit-content;
+            max-width: min(65vw, 900px);
+            max-height: 90vh;
             position: relative;
             background: #000;
             flex-shrink: 0;
             overflow: hidden;
+            border-radius: 16px;
         }
 
         #carousel-track {
             display: grid;
+            max-height: 90vh;
         }
 
         .carousel-slide {
@@ -318,13 +469,16 @@
 
         .carousel-slide.active {
             position: relative;
+            max-width: min(65vw, 900px);
             opacity: 1;
             pointer-events: auto;
         }
 
         .carousel-slide img {
-            width: 100%;
+            width: auto;
             height: auto;
+            max-width: min(65vw, 900px);
+            max-height: 88vh;
             display: block;
         }
 
@@ -445,11 +599,19 @@
         }
 
         #modal-body {
-            padding: 20px 24px 24px;
+            position: relative;
+            align-self: center;
+            width: min(410px, 34vw);
+            max-height: 82vh;
+            overflow-y: auto;
+            padding: 28px 26px;
+            border: 1px solid rgba(245,240,232,0.12);
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            background: #111;
+            gap: 12px;
+            background: rgba(17,17,17,0.96);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.55);
         }
 
         #modal-title {
@@ -496,7 +658,25 @@
         }
 
         @media (max-width: 600px) {
-            #adventure-modal { max-height: 95vh; }
+            #adventure-modal {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                max-height: calc(100dvh - 24px);
+                overflow-y: auto;
+            }
+            #modal-carousel,
+            .carousel-slide.active,
+            .carousel-slide img {
+                width: auto;
+                max-width: calc(100vw - 32px);
+                max-height: 52vh;
+            }
+            #modal-body {
+                width: min(100%, 520px);
+                max-height: 34vh;
+                padding: 18px 20px;
+            }
         }
     </style>
 </head>
@@ -529,6 +709,24 @@
             <button class="filter-btn" id="btn-climbing" onclick="setFilter('climbing')">
                 <span class="btn-icon">🧗</span> Climbing
             </button>
+        </div>
+    </div>
+
+    <div id="timeline-wrap" aria-label="Filter adventures by year">
+        <div id="timeline-topline">
+            <span id="timeline-heading">Timeline</span>
+            <span id="timeline-range-label"></span>
+            <button type="button" id="timeline-all">All years</button>
+        </div>
+        <div id="timeline-control">
+            <div id="timeline-track"></div>
+            <div id="timeline-selection" title="Drag to move the selected year range"></div>
+            <input class="timeline-range" id="timeline-start" type="range" aria-label="Start year">
+            <input class="timeline-range" id="timeline-end" type="range" aria-label="End year">
+        </div>
+        <div id="timeline-years" aria-hidden="true">
+            <span id="timeline-min-date"></span>
+            <span id="timeline-max-date"></span>
         </div>
     </div>
 
@@ -569,7 +767,8 @@
             fullscreenElement: 'cesiumContainer'
         });
 
-        viewer.scene.globe.enableLighting = true;
+        // Keep the entire globe evenly lit so the far side never turns to night.
+        viewer.scene.globe.enableLighting = false;
 
         const adventures = [
             {
@@ -645,14 +844,14 @@
                 description: "Family roots and Mediterranean views. Cape Cavo Greco with Mom and Dad."
             },
             {
-                title: "The Gorge Amphitheater: Bob Dylan Concert",
+                title: "The Gorge Amphitheater: Willie Nelson & Bob Dylan",
                 badge: "Spokane, WA",
                 lat: 47.099714, lon: -119.994275,
                 photos: [
                     { src: "Images/Gorge.jpg", date: "Aug 10, 2024" },
                     { src: "Images/Gorge_2.JPEG", date: "Aug 10, 2024" }
                 ],
-                description: "Bob Dylan concert at the Gorge Amphitheater. Beautiful sunset and even better venue."
+                description: "Willie Nelson and Bob Dylan concert at the Gorge Amphitheater. Beautiful sunset and even better venue. On the road again hit especially hard for us."
             },
             {
                 title: "The Enchantments: Lake Colchuck",
@@ -999,6 +1198,39 @@
                 ],
                 description: "Family vacation to Cyprus. You already know Peter wanted to climb, and I, the little brother I am, tagged along for the ride! Peter drove us up to the crag in Ineia, a village just outside of Paphos in the beach hills. Our Dad had a heart attack from all the off-roading in a rental car, so Peter and I stopped short and bushwhacked our way to the crag. We climbed a few routes, and they had these cute painted rocks at the bottom of each climb. A surreal climbing destination on some awesome limestone overlooking the Mediterranean Sea! Got the rest of the fam to come to us and watch the sunset too!!!"
             },
+
+
+
+        
+            {
+                title: "Index (Da PNW Jungle Gym)",
+                badge: "Index, WA",
+                category: "climbing",
+                lat: 47.816280, lon: -121.567020,
+                photos: [
+                    { src: "Images/Climbing/Index_1st_day.jpeg", date: "July 4, 2026" },
+                    { src: "Images/Climbing/Index_Bonnie_2.JPG", date: "July 4, 2026" },
+                    { src: "Images/Climbing/Index_2nd_day.jpeg", date: "July 4, 2026" },
+                    { src: "Images/Climbing/Index_Bonnie_1.JPG", date: "July 4, 2026" },
+                    { src: "Images/Climbing/Index_Railroad.jpeg", date: "July 4, 2026" },
+                    { src: "Images/Climbing/Index_Bonnie_3.JPG", date: "July 4, 2026" },
+                    { src: "Images/Climbing/Index_River.jpeg", date: "July 4, 2026" }
+                ],
+                description: 'Peter came out to visit me in the PNW for the first time and introduced me to trad climbing! I took a long 4th of July weekend and spent it camping and climbing down in Index. The first day, we headed into the jungle (Inner Walls) and climbed Golden Bucket. I also got a crash course in crack climbing from Peter’s friend Zach. The second day, we spent in the Country Walls area and climbed some chicken heads for the first time on a route called Zoom. The third day was spent in the Lower Town Walls. I was toasted and could not make it up Sagittarius, an epic crack route with a massive undercling traverse. On the fourth day, Peter took me on a multipitch. This was my first-ever time on rappel. I was spent after this weekend, but I don’t think I’ve ever learned more in such a short amount of time. Shoutout to Big Bro & Bonnie too! Camping was cozy down by the river, and we hacked all day long with the rest of the Index crew (Ladies Room)!!!'
+            },
+        
+            {
+                title: "Cheakamus(Check)Canyon",
+                badge: "Squamish, British Columbia",
+                category: "climbing",
+                lat: 49.9076, lon: -123.1590,
+                photos: [
+                    { src: "Images/Climbing/CheK_2.jpeg", date: "July 10, 2026" },
+                    { src: "Images/Climbing/Chek_1.jpg", date: "July 10, 2026" },
+                    { src: "Images/Climbing/Kinto_Ramen.jpeg", date: "July 10, 2026" }
+                ],
+                description: "Peter and I caught a little rain on our inaugural night in Squamish. In an attempt to find some cover, we headed into the forest up the road to a sport climbing crag called Chek Canyon. The weather warmed up quickly and, to our surprise, the rock was dry! I spent the day following easy sport routes with Peter until, before I knew it, I was attempting a 5.11a. After climbing the rope more than the actual wall, I eventually made it to the top. Found my limit at least. I then belayed Peter as he attempted to flash a slippery 5.12a. It did not go in his favor, but he eventually conquered the slippery beast. I remember the rock here being very geometric. It was as if Minecraft Steve had built a cobblestone staircase into the side of the wall. Oh almost forgot about Kinto Ramen on the way up. They loved the fact that we both finished our bowls, so they decided to take a promotional image of us for the page. Very funny props they had!"
+            },
         ];
 
         adventures.forEach(a => {
@@ -1006,9 +1238,98 @@
                 a.photos = [{ src: a.image || '', date: '' }];
             }
             if (!a.category) a.category = 'general';
+            const photoDate = a.photos.map(photo => Date.parse(photo.date || '')).find(Number.isFinite);
+            a.timelineDate = Number.isFinite(photoDate) ? Math.floor(photoDate / 86400000) : null;
         });
 
 let activeFilter = 'all';
+        const adventureDates = adventures.map(adventure => adventure.timelineDate).filter(Number.isFinite);
+        const timelineMinDate = Math.min(...adventureDates);
+        const timelineMaxDate = Math.max(...adventureDates);
+        let timelineStart = timelineMinDate;
+        let timelineEnd = timelineMaxDate;
+        const timelineStartInput = document.getElementById('timeline-start');
+        const timelineEndInput = document.getElementById('timeline-end');
+        const timelineSelection = document.getElementById('timeline-selection');
+        const timelineRangeLabel = document.getElementById('timeline-range-label');
+        const timelineControl = document.getElementById('timeline-control');
+
+        function formatTimelineDate(day, options = { month: 'short', year: 'numeric', timeZone: 'UTC' }) {
+            return new Date(day * 86400000).toLocaleDateString('en-US', options);
+        }
+
+        function syncTimeline() {
+            const day = 1;
+            timelineStartInput.min = timelineMinDate;
+            timelineStartInput.max = timelineEnd;
+            timelineStartInput.step = day;
+            timelineStartInput.value = timelineStart;
+            timelineEndInput.min = timelineStart;
+            timelineEndInput.max = timelineMaxDate;
+            timelineEndInput.step = day;
+            timelineEndInput.value = timelineEnd;
+
+            timelineRangeLabel.textContent = timelineStart === timelineMinDate && timelineEnd === timelineMaxDate
+                ? 'All years'
+                : `${formatTimelineDate(timelineStart, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })} – ${formatTimelineDate(timelineEnd, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}`;
+            document.getElementById('timeline-min-date').textContent = formatTimelineDate(timelineMinDate);
+            document.getElementById('timeline-max-date').textContent = formatTimelineDate(timelineMaxDate);
+
+            const range = Math.max(1, timelineMaxDate - timelineMinDate);
+            const left = (timelineStart - timelineMinDate) / range * 100;
+            const width = (timelineEnd - timelineStart) / range * 100;
+            timelineSelection.style.left = `${left}%`;
+            timelineSelection.style.width = `${Math.max(width, 2)}%`;
+            applyAdventureFilters();
+        }
+
+        function setTimelineRange(start, end) {
+            timelineStart = Math.max(timelineMinDate, Math.min(start, timelineMaxDate));
+            timelineEnd = Math.max(timelineStart, Math.min(end, timelineMaxDate));
+            syncTimeline();
+        }
+
+        function applyAdventureFilters() {
+            viewer.entities.values.forEach(entity => {
+                if (!entity.properties) return;
+                const category = entity.properties.category.getValue();
+                const date = entity.properties.timelineDate.getValue();
+                const dateMatches = timelineStart === timelineMinDate && timelineEnd === timelineMaxDate
+                    || date !== null && date >= timelineStart && date <= timelineEnd;
+                entity.show = (activeFilter === 'all' || category === activeFilter) && dateMatches;
+            });
+        }
+
+        timelineStartInput.addEventListener('input', () => {
+            const start = Number(timelineStartInput.value);
+            setTimelineRange(start, Math.max(start, timelineEnd));
+        });
+        timelineEndInput.addEventListener('input', () => {
+            const end = Number(timelineEndInput.value);
+            setTimelineRange(Math.min(timelineStart, end), end);
+        });
+        document.getElementById('timeline-all').addEventListener('click', () => {
+            setTimelineRange(timelineMinDate, timelineMaxDate);
+        });
+
+        let dragTimeline = null;
+        timelineSelection.addEventListener('pointerdown', event => {
+            event.preventDefault();
+            dragTimeline = { x: event.clientX, start: timelineStart, end: timelineEnd };
+            timelineSelection.setPointerCapture(event.pointerId);
+        });
+        timelineSelection.addEventListener('pointermove', event => {
+            if (!dragTimeline) return;
+            const rect = timelineControl.getBoundingClientRect();
+            const delta = Math.round((event.clientX - dragTimeline.x) / rect.width * (timelineMaxDate - timelineMinDate));
+            const width = dragTimeline.end - dragTimeline.start;
+            const start = Math.max(timelineMinDate, Math.min(dragTimeline.start + delta, timelineMaxDate - width));
+            setTimelineRange(start, start + width);
+        });
+        const stopTimelineDrag = () => { dragTimeline = null; };
+        timelineSelection.addEventListener('pointerup', stopTimelineDrag);
+        timelineSelection.addEventListener('pointercancel', stopTimelineDrag);
+        syncTimeline();
 
         function setFilter(filter) {
             activeFilter = filter;
@@ -1016,11 +1337,7 @@ let activeFilter = 'all';
             document.getElementById('btn-golf').classList.toggle('active', filter === 'golf');
             document.getElementById('btn-climbing').classList.toggle('active', filter === 'climbing');
 
-            viewer.entities.values.forEach(entity => {
-                if (!entity.properties) return;
-                const cat = entity.properties.category.getValue();
-                entity.show = (filter === 'all') || (cat === filter);
-            });
+            applyAdventureFilters();
         }
 
         function makePhotoPinCanvas(imgSrc, accentColor, onReady) {
@@ -1107,9 +1424,16 @@ let activeFilter = 'all';
                         badge: place.badge,
                         photos: JSON.stringify(place.photos),
                         description: place.description,
-                        category: place.category
+                        category: place.category,
+                        timelineDate: place.timelineDate
                     })
                 });
+                const categoryMatches = activeFilter === 'all' || place.category === activeFilter;
+                const dateMatches = timelineStart === timelineMinDate && timelineEnd === timelineMaxDate
+                    || place.timelineDate !== null
+                    && place.timelineDate >= timelineStart
+                    && place.timelineDate <= timelineEnd;
+                viewer.entities.values[viewer.entities.values.length - 1].show = categoryMatches && dateMatches;
             });
             setTimeout(processNextPin, 0);
         }
