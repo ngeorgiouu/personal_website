@@ -253,6 +253,27 @@
             line-height: 1;
         }
 
+        #map-controls-toggle {
+            position: static;
+            z-index: 180;
+            padding: 8px 12px;
+            border: 1px solid rgba(245,240,232,0.24);
+            border-radius: 999px;
+            background: rgba(20,20,20,0.78);
+            color: var(--cream);
+            font: 0.62rem 'DM Mono', monospace;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        #map-controls-toggle:hover { border-color: var(--gold); }
+        #map-controls-toggle { pointer-events: auto; }
+        body.controls-hidden .overlay-panel .hero-title,
+        body.controls-hidden #filter-bar .filter-btn,
+        body.controls-hidden #timeline-wrap { display: none; }
+
         #timeline-wrap {
             position: fixed;
             top: 110px;
@@ -395,7 +416,30 @@
         #timeline-all:hover { color: #fff; }
 
         @media (max-width: 700px) {
-            #timeline-wrap { top: 110px; right: 12px; width: min(340px, calc(100vw - 24px)); }
+            #timeline-wrap {
+                top: auto;
+                left: 50%;
+                right: auto;
+                bottom: max(30px, env(safe-area-inset-bottom));
+                transform: translateX(-50%);
+                width: min(300px, calc(100vw - 32px));
+                max-width: 300px;
+                margin-inline: 0;
+                padding: 4px 8px 3px;
+                border-radius: 8px 8px 0 0;
+                background: rgba(20,20,20,0.88);
+            }
+            #timeline-topline { margin-bottom: 0; }
+            #timeline-heading, #timeline-all { font-size: 0.5rem; }
+            #timeline-range-label { font-size: 0.54rem; }
+            #timeline-control { height: 16px; margin: 0 5px; }
+            #timeline-track,
+            #timeline-selection { top: 6px; }
+            .timeline-range { height: 16px; }
+            .timeline-range::-webkit-slider-runnable-track { height: 16px; }
+            .timeline-range::-moz-range-track { height: 16px; }
+            .timeline-range::-webkit-slider-thumb { margin-top: 1px; }
+            #timeline-years { margin-top: -2px; font-size: 0.46rem; }
         }
 
         #adventure-modal-bg {
@@ -691,11 +735,9 @@
             <a href="projects.html">Projects</a>
             <a href="adventures.html" class="active">Adventures</a>
         </nav>
-    </div>
+    </div>`r`n    <div id="cesiumContainer"></div>
 
-    <div id="cesiumContainer"></div>
-
-    <div class="overlay-panel">
+    <div class="overlay-panel" id="map-controls">
         <div class="hero-title">
             <em>Interactive Trekkers Globe (ITR)</em>
         </div>
@@ -709,6 +751,7 @@
             <button class="filter-btn" id="btn-climbing" onclick="setFilter('climbing')">
                 <span class="btn-icon">🧗</span> Climbing
             </button>
+            <button type="button" id="map-controls-toggle" aria-expanded="true" aria-controls="map-controls timeline-wrap">HIDE</button>
         </div>
     </div>
 
@@ -749,6 +792,13 @@
     </div>
 
     <script>
+        const mapControlsToggle = document.getElementById('map-controls-toggle');
+        mapControlsToggle.addEventListener('click', () => {
+            const hidden = document.body.classList.toggle('controls-hidden');
+            mapControlsToggle.textContent = hidden ? 'SHOW' : 'HIDE';
+            mapControlsToggle.setAttribute('aria-expanded', String(!hidden));
+        });
+
         Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDU0MWJiOC00YWM1LTQwMDItODFiYS00YzMyNGIwMTc3OGIiLCJpZCI6NDEwMjMwLCJpYXQiOjE3NzQ2NDc4NjN9.2lHv7QJPf2mTxkkO-ymcjwTyX2RmohXUjwvKFM_nd_Y";
 
         const viewer = new Cesium.Viewer('cesiumContainer', {
