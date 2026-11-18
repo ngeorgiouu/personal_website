@@ -1637,8 +1637,14 @@ let activeFilter = 'all';
             }
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+        const featuredAdventure = adventures[Math.floor(Math.random() * adventures.length)];
         viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(-98.5, 39.8, 20000000)
+            destination: Cesium.Cartesian3.fromDegrees(
+                featuredAdventure.lon,
+                featuredAdventure.lat,
+                1000000
+            ),
+            duration: 2.2
         });
 
         document.querySelectorAll('a, button').forEach(el => {
